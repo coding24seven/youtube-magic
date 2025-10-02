@@ -1,0 +1,37 @@
+import { addBrowserStorageListener, update } from "../browser-api";
+import { debounceUpdate } from "./utils";
+import { BrowserEvents } from "../content/events";
+import { StateChanges } from "../browser-api/types";
+
+console.info("background script running");
+
+// Update when the active tab changes
+browser.tabs.onActivated.addListener(async (info) => {
+  console.info("browser.tabs.onActivated, info:", info);
+  void update({
+    browserEvent: BrowserEvents.TabsOnActivated,
+  });
+});
+
+/* As this fires multiple times when url changes within the same tab, or page is reloaded, debouncing is employed. Atm it updates extension icon only and is ignored in content script */
+const getDebouncedTab = debounceUpdate(100);
+browser.tabs.onUpdated.addListener(async (_tabId, changeInfo, tab) => {
+  if (changeInfo.status === "complete" && tab.active) {
+    const lastTab = await getDebouncedTab(tab);
+    console.info("browser.tabs.onUpdated, tab:", lastTab, changeInfo);
+    void update({
+      browserEvent: BrowserEvents.TabsOnUpdated,
+      activeTab: lastTab,
+    });
+  }
+});
+
+// Update when the storage state changes
+addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
+  if (changes.extensionIsEnabled) {
+    void update({
+      browserEvent: BrowserEvents.StorageOnChanged,
+      extensionIsEnabled: changes.extensionIsEnabled.newValue,
+    });
+  }
+});

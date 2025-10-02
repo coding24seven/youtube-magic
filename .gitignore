@@ -1,0 +1,8 @@
+.idea
+.vscode
+.env
+node_modules
+watch-output
+build-output
+artifacts
+youtube-events.txt

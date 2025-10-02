@@ -1,0 +1,1 @@
+systemctl --user start docker-desktop && timeout 30s bash -c 'until docker info > /dev/null 2>&1; do sleep 1; done' && docker compose up --build build

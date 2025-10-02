@@ -1,0 +1,61 @@
+# YouTube Magic
+
+A browser extension that filters out watched YouTube videos, keeping your YouTube feeds fresh and uncluttered. This version hides watched videos only, while additional functionality is on the roadmap.
+
+## Features
+
+- Filters out videos that contain a progress bar, on YouTube.
+
+## Installation
+
+1. Install the extension from the [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/youtube-magic/) page.
+
+## Permissions
+
+- Access to YouTube channel pages (`https://www.youtube.com/@*`) to detect and filter videos.
+- No data collection or external requests.
+
+## System Requirements for development and build
+
+- Must be a Unix-based system (Linux, macOS, Windows WSL)
+
+## Development
+
+- Clone this repository.
+- run: `npm i`
+- run `npm start` or `./ddstart` for docker-desktop on Linux
+- Load the extension in your browser:
+  - Firefox: Go to `about:debugging#/runtime/this-firefox` and select "Load Temporary Add-on."
+
+## Build and Package (for Mozilla code reviewers)
+
+- to build and package into `artifacts/youtube_magic-<version>.zip`: run: `npm run build` or `./ddbuild` for docker-desktop on Linux
+
+## Build and Package (for extension developers)
+
+- Update `version` in `package.json`, `manifest.json`, `CHANGELOG.md`
+- to build for production, and package into `artifacts/youtube_magic-<version>.zip`: run: `npm run build` or `./ddbuild` for docker-desktop on Linux
+- merge develop into main
+- git tag -a v<version> -m "Release <version>: <Summary of changes> - Published to Firefox Add-ons"
+
+## Publish
+
+- Submit zip file from `artifacts/` to https://addons.mozilla.org
+
+## Zip Source Code
+
+- run: `npm run zip-source`
+
+## Directories
+
+- `watch-output`: development bundle
+- `build-output`: production bundle
+- `artifacts`: publish-ready zip file created with`web-ext`
+
+## License
+
+MIT License
+
+## Feedback
+
+Report issues or suggest features on [GitHub Issues](https://github.com/coding24seven/youtube-magic/issues).

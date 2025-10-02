@@ -1,0 +1,22 @@
+services:
+  start:
+    image: youtube-magic
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./src:/app/src
+      - ./watch-output:/app/watch-output
+      - ./utils:/app/utils
+    command: npm start
+  build:
+    image: youtube-magic
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./build-output:/app/build-output
+      - ./artifacts:/app/artifacts
+    command: npm run build
