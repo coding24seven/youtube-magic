@@ -30,7 +30,7 @@ export default class Element {
   public get newContents() {
     /* may include invisible elements */
     const contentsElements = Array.from(
-      document.querySelectorAll<HTMLElement>(selectors.contents[this.pageType]),
+      document.querySelectorAll<HTMLElement>(selectors.contents),
     );
 
     if (contentsElements.length === 0) {
@@ -131,12 +131,12 @@ export default class Element {
   }
 
   public hasProgressBar(element: HTMLElement) {
-    return !!element.querySelector(selectors.progressBar[this.pageType]);
+    return !!element.querySelector(selectors.progressBar);
   }
 
   public hasMembersOnlyBadge(element: HTMLElement) {
     const membersOnlyBadgeElement = element.querySelector(
-      selectors.membersOnlyBadge[this.pageType],
+      selectors.membersOnlyBadge,
     );
 
     return !!membersOnlyBadgeElement?.textContent;
@@ -149,7 +149,7 @@ export default class Element {
       (node) =>
         "matches" in node &&
         typeof node.matches === "function" &&
-        node.matches(selectors.chips[this.pageType]),
+        node.matches(selectors.chips),
     );
   }
 

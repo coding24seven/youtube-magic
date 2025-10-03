@@ -9,7 +9,7 @@ export function debounce(callback: () => void, waitMs: number) {
   };
 }
 
-export function runAtIntervalFor(
+export function _runAtIntervalFor(
   callback: () => void,
   intervalMs: number,
   durationMs: number,

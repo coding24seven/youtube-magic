@@ -10,67 +10,37 @@ const {
   ChannelStreamsPage,
 } = YouTubePageTypes;
 
-const contentsSelector = "#contents";
+const contents = "#contents";
 
-const watchPageVideoSelector = "yt-lockup-view-model";
-const channelHomePageVideoSelector = "ytd-grid-video-renderer";
-const otherPagesVideoSelector =
+const watchPageVideo = "yt-lockup-view-model";
+const channelHomePageVideo = "ytd-grid-video-renderer";
+const otherPagesVideo =
   "ytd-rich-item-renderer:not([is-post]):not([is-slim-media])";
 
-const progressBarSegmentSelector =
-  '*[class*="ProgressBarSegment" i][style*="width"]';
-const progressIdSelector = '#progress[style*="width"]';
+const progressBarSegment = '*[class*="ProgressBarSegment" i][style*="width"]';
+const progressId = '#progress[style*="width"]';
 
-const membersOnlyBadgeSelector = "p.ytd-badge-supported-renderer";
+const membersOnlyBadge = "p.ytd-badge-supported-renderer";
 
-const chipsContainerSelector = "iron-selector#chips";
+const chipsContainer = "iron-selector#chips";
+
+const numberedVideoClass = "numbered-video";
+const videoNumberClass = "video-number";
 
 export const selectors = {
-  numberedVideoClass: "numbered-video",
-  videoNumberClass: "video-number",
-  contents: {
-    [HomePage]: contentsSelector,
-    [SubscriptionsPage]: contentsSelector,
-    [WatchPage]: contentsSelector,
-    [ChannelHomePage]: contentsSelector,
-    [ChannelFeaturedPage]: contentsSelector,
-    [ChannelVideosPage]: contentsSelector,
-    [ChannelStreamsPage]: contentsSelector,
-  },
-  chips: {
-    [WatchPage]: chipsContainerSelector,
-    [HomePage]: chipsContainerSelector,
-    [SubscriptionsPage]: chipsContainerSelector,
-    [ChannelHomePage]: chipsContainerSelector,
-    [ChannelFeaturedPage]: chipsContainerSelector,
-    [ChannelVideosPage]: chipsContainerSelector,
-    [ChannelStreamsPage]: chipsContainerSelector,
-  },
+  numberedVideoClass,
+  videoNumberClass,
+  contents,
+  progressBar: [progressBarSegment, progressId].join(", "),
+  membersOnlyBadge,
+  chips: chipsContainer,
   video: {
-    [HomePage]: otherPagesVideoSelector,
-    [SubscriptionsPage]: otherPagesVideoSelector,
-    [WatchPage]: watchPageVideoSelector,
-    [ChannelHomePage]: channelHomePageVideoSelector,
-    [ChannelFeaturedPage]: channelHomePageVideoSelector,
-    [ChannelVideosPage]: otherPagesVideoSelector,
-    [ChannelStreamsPage]: otherPagesVideoSelector,
-  },
-  progressBar: {
-    [HomePage]: progressBarSegmentSelector,
-    [SubscriptionsPage]: progressBarSegmentSelector,
-    [WatchPage]: progressBarSegmentSelector,
-    [ChannelHomePage]: progressIdSelector,
-    [ChannelFeaturedPage]: progressIdSelector,
-    [ChannelVideosPage]: progressIdSelector,
-    [ChannelStreamsPage]: progressIdSelector,
-  },
-  membersOnlyBadge: {
-    [HomePage]: membersOnlyBadgeSelector,
-    [SubscriptionsPage]: membersOnlyBadgeSelector,
-    [WatchPage]: membersOnlyBadgeSelector,
-    [ChannelHomePage]: membersOnlyBadgeSelector,
-    [ChannelFeaturedPage]: membersOnlyBadgeSelector,
-    [ChannelVideosPage]: membersOnlyBadgeSelector,
-    [ChannelStreamsPage]: membersOnlyBadgeSelector,
+    [HomePage]: otherPagesVideo,
+    [SubscriptionsPage]: otherPagesVideo,
+    [WatchPage]: watchPageVideo,
+    [ChannelHomePage]: channelHomePageVideo,
+    [ChannelFeaturedPage]: channelHomePageVideo,
+    [ChannelVideosPage]: otherPagesVideo,
+    [ChannelStreamsPage]: otherPagesVideo,
   },
 };
