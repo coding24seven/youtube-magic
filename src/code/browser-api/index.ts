@@ -103,13 +103,13 @@ export async function updateExtensionIcon({
   tabUrl,
 }: UpdateIconProperties) {
   const iconPath =
-    extensionIsEnabled && (await extensionShouldRunOnCurrentPage(tabUrl))
+    extensionIsEnabled && (await extensionShouldRunOnCurrentPageType(tabUrl))
       ? "media/icons/extension-is-enabled.png"
       : "media/icons/extension-is-disabled.png";
   void browser.browserAction.setIcon({ path: iconPath });
 }
 
-export async function extensionShouldRunOnCurrentPage(activeTabUrl?: string) {
+export async function extensionShouldRunOnCurrentPageType(activeTabUrl?: string) {
   const url = activeTabUrl || (await queryActiveTab()).url;
 
   if (!url) {
@@ -123,22 +123,26 @@ export async function extensionShouldRunOnCurrentPage(activeTabUrl?: string) {
 
 export function addBrowserStorageListener(
   eventName: "onChanged",
-  listener: (changes: any) => void,
+  callbackListener: (changes: any) => void,
 ) {
+  const listener = async (changes: StateChanges, area: string) => {
+    console.info("storage.onChanged, changes:", changes);
+
+    if (area !== "local") {
+      return;
+    }
+
+    callbackListener(changes);
+  };
+
   switch (eventName) {
     case "onChanged":
-      browser.storage.onChanged.addListener(
-        async (changes: StateChanges, area) => {
-          console.info("storage.onChanged, changes:", changes);
-
-          if (area !== "local") {
-            return;
-          }
-
-          listener(changes);
-        },
-      );
+      browser.storage.onChanged.addListener(listener);
       break;
     default:
   }
+
+  return () => {
+    browser.storage.onChanged.removeListener(listener);
+  };
 }
