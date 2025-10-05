@@ -17,9 +17,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
     "@types/firefox-webext-browser": "^120.0.4",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
     "prettier": "^3.6.2",
     "rollup": "^4.46.2",
     "rollup-plugin-copy": "^3.5.0",
@@ -30,5 +34,9 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "description": "hides unwanted videos on youtube"
+  "description": "hides unwanted videos on youtube",
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  }
 }
