@@ -9,5 +9,5 @@ compensateForFirefoxBugs();
 new Filter({
   watchedFilterEnabled: true,
   membersOnlyFilterEnabled: false,
-  showVideoNumbers: true,
+  videoNumbersAreShown: true,
 });
