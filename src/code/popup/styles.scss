@@ -1,0 +1,43 @@
+body.youtube-magic-popup {
+  margin: 0;
+  padding: 0.75rem;
+  background-color: #0f0f0f;
+  color: #ffffff;
+  font-family: "Roboto", Arial, sans-serif;
+
+  button#toggle-filter {
+    padding: 0.3rem 0.6rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 0.4rem;
+    background-color: #cc0000;
+    transition: background-color 0.2s;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  button#toggle-filter:hover {
+    background-color: #ff0000;
+  }
+
+  button#toggle-filter:active {
+    background-color: #b30000;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+  }
+
+  p#video-count,
+  p#hidden-video-count {
+    margin-top: 1rem;
+    margin-bottom: 0;
+    color: #aaaaaa;
+  }
+
+  p#extension-should-not-run {
+    color: #f28c38;
+    font-style: italic;
+  }
+}

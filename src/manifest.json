@@ -11,7 +11,7 @@
     {
       "matches": ["*://*.youtube.com/*"],
       "js": ["code/content/index.js"],
-      "css": ["styles.css"]
+      "css": ["code/content/styles.css"]
     }
   ],
   "icons": {
