@@ -11,7 +11,7 @@ import { StateChanges } from "../browser-api/types";
 import Options from "./Options";
 import { VideoCount } from "./VideoCount";
 
-export interface Config {
+export interface OptionsConfig {
   name: OptionNames;
   checked: boolean;
   title: string;
@@ -93,7 +93,7 @@ const App = () => {
     );
   }
 
-  const filtersConfig: Config[] = [
+  const filtersConfig: OptionsConfig[] = [
     {
       name: Watched,
       checked: select.watched,
@@ -105,7 +105,7 @@ const App = () => {
       title: "Members Only",
     },
   ];
-  const optionsConfig: Config[] = [
+  const optionsConfig: OptionsConfig[] = [
     {
       name: VideoNumbersAreShown,
       checked: select.videoNumbersAreShown,

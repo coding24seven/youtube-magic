@@ -1,10 +1,10 @@
 import { ChangeEvent } from "react";
 import SelectItem from "./SelectItem";
-import { Config } from "./App";
+import { OptionsConfig } from "./App";
 
 interface Props {
   heading: string;
-  itemsConfig: Config[];
+  itemsConfig: OptionsConfig[];
   handleOptionChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
