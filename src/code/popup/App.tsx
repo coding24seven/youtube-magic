@@ -9,31 +9,33 @@ import {
 } from "../browser-api";
 import { StateChanges } from "../browser-api/types";
 import Options from "./Options";
+import { VideoCount } from "./VideoCount";
 
 export interface Config {
-  name: ItemNames;
+  name: OptionNames;
   checked: boolean;
   title: string;
 }
 
-enum ItemNames {
+enum OptionNames {
   Watched = "watched",
   MembersOnly = "membersOnly",
   VideoNumbersAreShown = "videoNumbersAreShown",
 }
+const { Watched, MembersOnly, VideoNumbersAreShown } = OptionNames;
 
-const { Watched, MembersOnly, VideoNumbersAreShown } = ItemNames;
+const initialSelectState: Record<OptionNames, boolean> = {
+  [Watched]: false,
+  [MembersOnly]: false,
+  [VideoNumbersAreShown]: false,
+};
 
 const App = () => {
   const [shouldRun, setShouldRun] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
   const [videoCount, setVideoCount] = useState(0);
   const [hiddenVideoCount, setHiddenVideoCount] = useState(0);
-  const [select, setSelect] = useState<Record<ItemNames, boolean>>({
-    [Watched]: false,
-    [MembersOnly]: false,
-    [VideoNumbersAreShown]: false,
-  });
+  const [select, setSelect] = useState(initialSelectState);
 
   const handleOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
@@ -128,8 +130,10 @@ const App = () => {
             itemsConfig={optionsConfig}
             handleOptionChange={handleOptionChange}
           />
-          <p id="video-count">Videos Total: {videoCount}</p>
-          <p id="hidden-video-count">Videos Hidden: {hiddenVideoCount}</p>
+          <VideoCount
+            videoCount={videoCount}
+            hiddenVideoCount={hiddenVideoCount}
+          />
         </>
       )}
     </>
