@@ -19,7 +19,7 @@ import Dom from "./dom";
 export interface Options {
   watchedFilterEnabled: boolean;
   membersOnlyFilterEnabled: boolean;
-  showVideoNumbers: boolean;
+  videoNumbersAreShown: boolean;
 }
 
 export default class Filter {
@@ -35,10 +35,10 @@ export default class Filter {
   numberVideos = debounce(async () => {
     if (
       (await isExtensionEnabled()) &&
-      this.options.showVideoNumbers &&
+      this.options.videoNumbersAreShown &&
       process.env.NODE_ENV === "development"
     ) {
-      this.options.showVideoNumbers && this.element.numberVideos();
+      this.options.videoNumbersAreShown && this.element.numberVideos();
     }
   }, 100);
 
@@ -93,7 +93,7 @@ export default class Filter {
       },
       () => {
         if (
-          this.options.showVideoNumbers &&
+          this.options.videoNumbersAreShown &&
           process.env.NODE_ENV === "development" &&
           contents
         ) {

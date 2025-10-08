@@ -44,7 +44,8 @@ export default class Element {
 
     /* filter out #contents elements that do not contain videos, i.e. #contents elements for viewers' comments */
     const contentsElementsWithVideos = visibleContentsElements.filter(
-      (element) => !!element.querySelector(this.videoElementTagName),
+      (contentsElement) =>
+        !!contentsElement.querySelector(this.videoElementTagName),
     );
 
     const [outerMostContentsElement] = contentsElementsWithVideos;
@@ -131,15 +132,13 @@ export default class Element {
   }
 
   public hasProgressBar(element: HTMLElement) {
-    return !!element.querySelector(selectors.progressBar);
+    return !!Dom.find(element, selectors.progressBar);
   }
 
   public hasMembersOnlyBadge(element: HTMLElement) {
-    const membersOnlyBadgeElement = element.querySelector(
-      selectors.membersOnlyBadge,
-    );
+    const badge = Dom.find(element, selectors.membersOnlyBadge);
 
-    return !!membersOnlyBadgeElement?.textContent;
+    return !!(badge && badge.textContent);
   }
 
   public hasChipBeenClicked(event: Event) {

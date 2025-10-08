@@ -19,8 +19,14 @@ const otherPagesVideo =
 
 const progressBarSegment = '*[class*="ProgressBarSegment" i][style*="width"]';
 const progressId = '#progress[style*="width"]';
+const progressBar = [progressBarSegment, progressId].join(", ");
 
-const membersOnlyBadge = "p.ytd-badge-supported-renderer";
+const membersOnlyBadgeSupportedRenderer = "p.ytd-badge-supported-renderer";
+const commerceBadge = "badge-shape.yt-badge-shape.yt-badge-shape--commerce";
+const membersOnlyBadge = [
+  membersOnlyBadgeSupportedRenderer,
+  commerceBadge,
+].join(", ");
 
 const chipsContainer = "iron-selector#chips";
 
@@ -31,7 +37,7 @@ export const selectors = {
   numberedVideoClass,
   videoNumberClass,
   contents,
-  progressBar: [progressBarSegment, progressId].join(", "),
+  progressBar,
   membersOnlyBadge,
   chips: chipsContainer,
   video: {

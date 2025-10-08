@@ -28,6 +28,17 @@ export default class Dom {
     return true;
   }
 
+  public static find(
+    element: HTMLElement,
+    selector: string,
+  ): HTMLElement | null {
+    if (element.matches(selector)) {
+      return element;
+    }
+
+    return element.querySelector(selector);
+  }
+
   public static getAncestor(ancestorSelector: string, descendant: HTMLElement) {
     let parent: HTMLElement | null = descendant;
 

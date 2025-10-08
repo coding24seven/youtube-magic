@@ -8,6 +8,6 @@ compensateForFirefoxBugs();
 
 new Filter({
   watchedFilterEnabled: true,
-  membersOnlyFilterEnabled: false,
+  membersOnlyFilterEnabled: true,
   videoNumbersAreShown: true,
 });
