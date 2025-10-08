@@ -1,10 +1,11 @@
 import typescript from "rollup-plugin-typescript2";
 import copy from "rollup-plugin-copy";
-import getTerser from "./rollup-plugins/terser.js";
+import getTerser from "./rollup-plugins/getTerser.js";
 import replace from "@rollup/plugin-replace";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import { getPostCss } from "./rollup-plugins/postcss.js";
+import { getSass } from "./rollup-plugins/getSass.js";
+import path from "path";
 
 const isProduction = process.env.NODE_ENV === "production";
 const outputDir = isProduction ? "build-output" : "watch-output";
@@ -34,7 +35,10 @@ export default [
         preventAssignment: true,
       }),
       isProduction && terser,
-      getPostCss({ outputPath: "code/content/styles.css", isProduction }),
+      getSass({
+        output: path.join(outputDir, "code", "content", "styles.css"),
+        isProduction,
+      }),
     ],
   },
   {
@@ -65,7 +69,10 @@ export default [
         sourceMap: !isProduction,
       }),
       isProduction && terser,
-      getPostCss({ outputPath: "code/popup/styles.css", isProduction }),
+      getSass({
+        output: path.join(outputDir, "code", "popup", "styles.css"),
+        isProduction,
+      }),
     ],
   },
   {
