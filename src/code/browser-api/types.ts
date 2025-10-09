@@ -1,9 +1,12 @@
 import Tab = browser.tabs.Tab;
 import { YouTubePageTypes } from "../content/types";
 import { BrowserEvents } from "../content/events";
+import { Filters, Options } from "../types";
 
 export interface State {
   extensionIsEnabled: boolean | undefined;
+  filters: Filters;
+  options: Options;
   videoCount: number | undefined;
   hiddenVideoCount: number | undefined;
 }

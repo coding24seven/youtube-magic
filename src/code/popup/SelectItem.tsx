@@ -4,10 +4,10 @@ interface Props {
   name: string;
   checked: boolean;
   title: string;
-  handleOptionChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleSelectChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const SelectItem = ({ name, checked, title, handleOptionChange }: Props) => {
+const SelectItem = ({ name, checked, title, handleSelectChange }: Props) => {
   return (
     <li>
       <label>
@@ -15,7 +15,7 @@ const SelectItem = ({ name, checked, title, handleOptionChange }: Props) => {
           type="checkbox"
           name={name}
           checked={checked}
-          onChange={handleOptionChange}
+          onChange={handleSelectChange}
         />
         {title}
       </label>

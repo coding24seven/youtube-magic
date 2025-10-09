@@ -9,6 +9,7 @@ import {
   UpdateStateProperties,
 } from "./types";
 import YouTube from "../utils/youtube";
+import { FilterNames, ViewOptionNames } from "../types";
 import Tab = browser.tabs.Tab;
 
 const youTube = new YouTube();
@@ -28,6 +29,30 @@ export async function isExtensionEnabled() {
 export async function toggleExtensionIsEnabled() {
   return setState({
     extensionIsEnabled: !(await isExtensionEnabled()),
+  });
+}
+
+export async function isFilterEnabled(filterName: FilterNames) {
+  return !!(await loadState()).filters?.[filterName];
+}
+
+export async function toggleFilter(filterName: FilterNames) {
+  const { filters } = await loadState();
+
+  return setState({
+    filters: { ...filters, [filterName]: !(await isFilterEnabled(filterName)) },
+  });
+}
+
+export async function isOptionEnabled(optionName: ViewOptionNames) {
+  return !!(await loadState()).options?.[optionName];
+}
+
+export async function toggleOption(optionName: ViewOptionNames) {
+  const { options } = await loadState();
+
+  return setState({
+    options: { ...options, [optionName]: !(await isOptionEnabled(optionName)) },
   });
 }
 
@@ -109,7 +134,9 @@ export async function updateExtensionIcon({
   void browser.browserAction.setIcon({ path: iconPath });
 }
 
-export async function extensionShouldRunOnCurrentPageType(activeTabUrl?: string) {
+export async function extensionShouldRunOnCurrentPageType(
+  activeTabUrl?: string,
+) {
   const url = activeTabUrl || (await queryActiveTab()).url;
 
   if (!url) {

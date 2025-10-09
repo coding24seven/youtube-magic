@@ -3,44 +3,65 @@ import {
   addBrowserStorageListener,
   extensionShouldRunOnCurrentPageType,
   isExtensionEnabled,
+  isFilterEnabled,
+  isOptionEnabled,
   loadHiddenVideoCount,
   loadVideoCount,
   toggleExtensionIsEnabled,
+  toggleFilter,
+  toggleOption,
 } from "../browser-api";
 import { StateChanges } from "../browser-api/types";
 import Options from "./Options";
 import { VideoCount } from "./VideoCount";
+import { FilterNames, ViewOptionNames } from "../types";
 
-export interface OptionsConfig {
-  name: OptionNames;
+export interface SelectItemConfig {
+  name: FilterNames | ViewOptionNames;
   checked: boolean;
   title: string;
 }
 
-enum OptionNames {
-  Watched = "watched",
-  MembersOnly = "membersOnly",
-  VideoNumbersAreShown = "videoNumbersAreShown",
-}
-const { Watched, MembersOnly, VideoNumbersAreShown } = OptionNames;
+const { Watched, MembersOnly } = FilterNames;
+const { VideoNumbersAreShown } = ViewOptionNames;
 
-const initialSelectState: Record<OptionNames, boolean> = {
+const initialFiltersSelectState: Record<FilterNames, boolean> = {
   [Watched]: false,
   [MembersOnly]: false,
+};
+
+const initialOptionsSelectState: Record<ViewOptionNames, boolean> = {
   [VideoNumbersAreShown]: false,
 };
 
 const App = () => {
-  const [shouldRun, setShouldRun] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
+  const [extensionShouldRunOnPageType, setExtensionShouldRunOnPageType] =
+    useState(false);
+  const [extensionIsEnabled, setExtensionIsEnabled] = useState(true);
   const [videoCount, setVideoCount] = useState(0);
   const [hiddenVideoCount, setHiddenVideoCount] = useState(0);
-  const [select, setSelect] = useState(initialSelectState);
+  const [filterSelect, setFilterSelect] = useState(initialFiltersSelectState);
+  const [optionSelect, setOptionSelect] = useState(initialOptionsSelectState);
 
-  const handleOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFiltersChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
+    const filterName = name as FilterNames;
 
-    setSelect((previousState) => ({
+    void toggleFilter(filterName);
+
+    setFilterSelect((previousState) => ({
+      ...previousState,
+      [name]: checked,
+    }));
+  };
+
+  const handleOptionsChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = event.target;
+    const optionName = name as ViewOptionNames;
+
+    void toggleOption(optionName);
+
+    setOptionSelect((previousState) => ({
       ...previousState,
       [name]: checked,
     }));
@@ -49,26 +70,42 @@ const App = () => {
   useEffect(() => {
     async function init() {
       const run = await extensionShouldRunOnCurrentPageType();
-      setShouldRun(run);
-
+      setExtensionShouldRunOnPageType(run);
       if (!run) return;
 
-      const enabled = await isExtensionEnabled();
-      setIsEnabled(enabled);
+      const isEnabled = await isExtensionEnabled();
+      setExtensionIsEnabled(isEnabled);
+      if (!isEnabled) return;
 
-      if (enabled) {
-        setVideoCount((await loadVideoCount()) || 0);
-        setHiddenVideoCount((await loadHiddenVideoCount()) || 0);
+      for (const filterName of Object.values(FilterNames)) {
+        const isEnabled = await isFilterEnabled(filterName);
+
+        setFilterSelect((previousState) => ({
+          ...previousState,
+          [filterName]: isEnabled,
+        }));
       }
+
+      for (const optionName of Object.values(ViewOptionNames)) {
+        const isEnabled = await isOptionEnabled(optionName);
+
+        setOptionSelect((previousState) => ({
+          ...previousState,
+          [optionName]: isEnabled,
+        }));
+      }
+
+      setVideoCount((await loadVideoCount()) || 0);
+      setHiddenVideoCount((await loadHiddenVideoCount()) || 0);
     }
 
     void init();
   }, []);
 
   useEffect(() => {
-    const listener = (changes: StateChanges) => {
+    const listener = async (changes: StateChanges) => {
       if (changes.extensionIsEnabled) {
-        setIsEnabled(changes.extensionIsEnabled.newValue);
+        setExtensionIsEnabled(changes.extensionIsEnabled.newValue);
       }
       if (changes.videoCount) {
         setVideoCount(changes.videoCount.newValue);
@@ -85,7 +122,7 @@ const App = () => {
     };
   }, []);
 
-  if (!shouldRun) {
+  if (!extensionShouldRunOnPageType) {
     return (
       <p id="extension-should-not-run">
         This extension is not meant to run on this page
@@ -93,22 +130,22 @@ const App = () => {
     );
   }
 
-  const filtersConfig: OptionsConfig[] = [
+  const filtersConfig: SelectItemConfig[] = [
     {
       name: Watched,
-      checked: select.watched,
+      checked: filterSelect.watched,
       title: "Watched",
     },
     {
       name: MembersOnly,
-      checked: select.membersOnly,
+      checked: filterSelect.membersOnly,
       title: "Members Only",
     },
   ];
-  const optionsConfig: OptionsConfig[] = [
+  const optionsConfig: SelectItemConfig[] = [
     {
       name: VideoNumbersAreShown,
-      checked: select.videoNumbersAreShown,
+      checked: optionSelect.videoNumbersAreShown,
       title: "Video Numbers",
     },
   ];
@@ -116,19 +153,19 @@ const App = () => {
   return (
     <>
       <button id="toggle-filter" onClick={toggleExtensionIsEnabled}>
-        {isEnabled ? "Disable YouTube Magic" : "Enable YouTube Magic"}
+        {extensionIsEnabled ? "Disable YouTube Magic" : "Enable YouTube Magic"}
       </button>
-      {isEnabled && (
+      {extensionIsEnabled && (
         <>
           <Options
             heading="Filters"
             itemsConfig={filtersConfig}
-            handleOptionChange={handleOptionChange}
+            handleSelectChange={handleFiltersChange}
           />
           <Options
             heading="Options"
             itemsConfig={optionsConfig}
-            handleOptionChange={handleOptionChange}
+            handleSelectChange={handleOptionsChange}
           />
           <VideoCount
             videoCount={videoCount}
