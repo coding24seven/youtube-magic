@@ -1,14 +1,13 @@
-body.youtube-magic-popup {
+.youtube-magic-popup {
   $textColor: #f1f1f1;
   $warningColor: #f28c38;
-
   margin: 0;
   padding: 0.75rem;
   background-color: #0f0f0f;
   color: $textColor;
   font-family: "Roboto", Arial, sans-serif;
 
-  button#toggle-filter {
+  &__toggle-extension {
     padding: 0.3rem 0.6rem;
     font-size: 1rem;
     border: none;
@@ -27,25 +26,29 @@ body.youtube-magic-popup {
     }
   }
 
-  #video-count,
-  #hidden-video-count {
-    margin-top: 1rem;
+  &__video-count-heading {
+    margin-bottom: 0.5rem;
+  }
+
+  &__video-count,
+  &__hidden-video-count {
+    margin-top: 0.5rem;
     margin-bottom: 0;
   }
 
-  #extension-should-not-run {
+  &__extension-should-not-run {
     margin: 0.5rem 0;
     font-size: 1rem;
     font-style: italic;
     color: $warningColor;
   }
 
-  .select-heading {
+  &__select-heading {
     margin-top: 1rem;
     margin-bottom: 0;
   }
 
-  .select-list {
+  &__select-list {
     margin-top: 0.5rem;
     padding: 0;
     list-style-type: none;

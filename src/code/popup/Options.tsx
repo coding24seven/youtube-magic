@@ -11,8 +11,8 @@ interface Props {
 const Options = ({ heading, itemsConfig, handleSelectChange }: Props) => {
   return (
     <section>
-      <h4 className="select-heading">{heading}:</h4>
-      <ul className="select-list">
+      <h4 className="youtube-magic-popup__select-heading">{heading}:</h4>
+      <ul className="youtube-magic-popup__select-list">
         {itemsConfig.map(({ name, checked, title }) => (
           <SelectItem
             key={name}

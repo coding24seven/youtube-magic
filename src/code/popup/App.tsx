@@ -27,7 +27,7 @@ const App = () => {
 
   if (!extensionCanRunOnPageType) {
     return (
-      <p id="extension-should-not-run">
+      <p className="youtube-magic-popup__extension-should-not-run">
         This extension is not meant to run on this page
       </p>
     );
@@ -55,7 +55,10 @@ const App = () => {
 
   return (
     <>
-      <button id="toggle-filter" onClick={handleExtensionToggle}>
+      <button
+        className="youtube-magic-popup__toggle-extension"
+        onClick={handleExtensionToggle}
+      >
         {extensionIsEnabled ? "Disable YouTube Magic" : "Enable YouTube Magic"}
       </button>
       {extensionIsEnabled && (
