@@ -15,6 +15,9 @@ import Tab = browser.tabs.Tab;
 const youTube = new YouTube();
 
 export function loadState() {
+  browser.storage.local.get().then((state) => {
+    console.log("state", JSON.stringify(state, null, 2));
+  });
   return browser.storage.local.get() as Promise<State>;
 }
 
@@ -40,7 +43,7 @@ export async function toggleFilter(filterName: FilterNames) {
   const { filters } = await loadState();
 
   return setState({
-    filters: { ...filters, [filterName]: !(await isFilterEnabled(filterName)) },
+    filters: { ...filters, [filterName]: !filters[filterName] },
   });
 }
 
@@ -52,7 +55,7 @@ export async function toggleOption(optionName: ViewOptionNames) {
   const { options } = await loadState();
 
   return setState({
-    options: { ...options, [optionName]: !(await isOptionEnabled(optionName)) },
+    options: { ...options, [optionName]: !options[optionName] },
   });
 }
 
