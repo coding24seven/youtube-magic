@@ -1,20 +1,17 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import {
-  addBrowserStorageListener,
   extensionShouldRunOnCurrentPageType,
   isExtensionEnabled,
   isFilterEnabled,
   isOptionEnabled,
-  loadHiddenVideoCount,
-  loadVideoCount,
   toggleExtensionIsEnabled,
   toggleFilter,
   toggleOption,
 } from "../browser-api";
-import { StateChanges } from "../browser-api/types";
 import Options from "./Options";
 import { VideoCount } from "./VideoCount";
 import { FilterNames, ViewOptionNames } from "../types";
+import { useVideoCounts } from "./hooks/useVideoCounts";
 
 export interface SelectItemConfig {
   name: FilterNames | ViewOptionNames;
@@ -38,10 +35,14 @@ const App = () => {
   const [extensionShouldRunOnPageType, setExtensionShouldRunOnPageType] =
     useState(false);
   const [extensionIsEnabled, setExtensionIsEnabled] = useState(true);
-  const [videoCount, setVideoCount] = useState(0);
-  const [hiddenVideoCount, setHiddenVideoCount] = useState(0);
   const [filterSelect, setFilterSelect] = useState(initialFiltersSelectState);
   const [optionSelect, setOptionSelect] = useState(initialOptionsSelectState);
+  const { videoCount, hiddenVideoCount } = useVideoCounts();
+
+  const handleExtensionToggle = () => {
+    setExtensionIsEnabled((isEnabled) => !isEnabled);
+    void toggleExtensionIsEnabled();
+  };
 
   const handleFiltersChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = event.target;
@@ -94,32 +95,9 @@ const App = () => {
           [optionName]: isEnabled,
         }));
       }
-
-      setVideoCount((await loadVideoCount()) || 0);
-      setHiddenVideoCount((await loadHiddenVideoCount()) || 0);
     }
 
     void init();
-  }, []);
-
-  useEffect(() => {
-    const listener = async (changes: StateChanges) => {
-      if (changes.extensionIsEnabled) {
-        setExtensionIsEnabled(changes.extensionIsEnabled.newValue);
-      }
-      if (changes.videoCount) {
-        setVideoCount(changes.videoCount.newValue);
-      }
-      if (changes.hiddenVideoCount) {
-        setHiddenVideoCount(changes.hiddenVideoCount.newValue);
-      }
-    };
-
-    addBrowserStorageListener("onChanged", listener);
-
-    return () => {
-      /* no need to remove listener as `browser.storage.onChanged` is global to the extension and does not leak memory across popup instances since a popup reloads fresh each time you open it. */
-    };
   }, []);
 
   if (!extensionShouldRunOnPageType) {
@@ -152,7 +130,7 @@ const App = () => {
 
   return (
     <>
-      <button id="toggle-filter" onClick={toggleExtensionIsEnabled}>
+      <button id="toggle-filter" onClick={handleExtensionToggle}>
         {extensionIsEnabled ? "Disable YouTube Magic" : "Enable YouTube Magic"}
       </button>
       {extensionIsEnabled && (

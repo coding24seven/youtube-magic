@@ -15,9 +15,6 @@ import Tab = browser.tabs.Tab;
 const youTube = new YouTube();
 
 export function loadState() {
-  browser.storage.local.get().then((state) => {
-    console.log("state", JSON.stringify(state, null, 2));
-  });
   return browser.storage.local.get() as Promise<State>;
 }
 
