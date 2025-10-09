@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
-import {
-  extensionShouldRunOnCurrentPageType,
-  isExtensionEnabled,
-  toggleExtensionIsEnabled,
-} from "../browser-api";
+import { useState } from "react";
 import Options from "./Options";
 import { VideoCount } from "./VideoCount";
 import { FilterNames, ViewOptionNames } from "../types";
 import { useVideoCounts } from "./hooks/useVideoCounts";
 import { useFilters } from "./hooks/useFilters";
 import { useOptions } from "./hooks/useOptions";
+import { useExtensionIsEnabled } from "./hooks/useExtensionIsEnabled";
+import { useExtensionCanRun } from "./hooks/useExtensionCanRun";
 
 export interface SelectItemConfig {
   name: FilterNames | ViewOptionNames;
@@ -21,32 +18,14 @@ const { Watched, MembersOnly } = FilterNames;
 const { VideoNumbersAreShown } = ViewOptionNames;
 
 const App = () => {
-  const [extensionShouldRunOnPageType, setExtensionShouldRunOnPageType] =
-    useState(false);
-  const [extensionIsEnabled, setExtensionIsEnabled] = useState(true);
+  useState(false);
+  const { extensionCanRunOnPageType } = useExtensionCanRun();
+  const { extensionIsEnabled, handleExtensionToggle } = useExtensionIsEnabled();
   const { videoCount, hiddenVideoCount } = useVideoCounts();
   const { filterSelect, handleFiltersChange } = useFilters();
   const { optionSelect, handleOptionsChange } = useOptions();
-  const handleExtensionToggle = () => {
-    setExtensionIsEnabled((isEnabled) => !isEnabled);
-    void toggleExtensionIsEnabled();
-  };
 
-  useEffect(() => {
-    async function init() {
-      const run = await extensionShouldRunOnCurrentPageType();
-      setExtensionShouldRunOnPageType(run);
-      if (!run) return;
-
-      const isEnabled = await isExtensionEnabled();
-      setExtensionIsEnabled(isEnabled);
-      if (!isEnabled) return;
-    }
-
-    void init();
-  }, []);
-
-  if (!extensionShouldRunOnPageType) {
+  if (!extensionCanRunOnPageType) {
     return (
       <p id="extension-should-not-run">
         This extension is not meant to run on this page

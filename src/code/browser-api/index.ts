@@ -128,15 +128,13 @@ export async function updateExtensionIcon({
   tabUrl,
 }: UpdateIconProperties) {
   const iconPath =
-    extensionIsEnabled && (await extensionShouldRunOnCurrentPageType(tabUrl))
+    extensionIsEnabled && (await extensionCanRunOnCurrentPageType(tabUrl))
       ? "media/icons/extension-is-enabled.png"
       : "media/icons/extension-is-disabled.png";
   void browser.browserAction.setIcon({ path: iconPath });
 }
 
-export async function extensionShouldRunOnCurrentPageType(
-  activeTabUrl?: string,
-) {
+export async function extensionCanRunOnCurrentPageType(activeTabUrl?: string) {
   const url = activeTabUrl || (await queryActiveTab()).url;
 
   if (!url) {
