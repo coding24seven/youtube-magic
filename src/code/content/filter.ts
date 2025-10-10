@@ -25,7 +25,7 @@ export interface Options {
 export default class Filter {
   watchedFilterEnabled: boolean = true;
   membersOnlyFilterEnabled: boolean = true;
-  videoElementsHidden = new Set();
+  hiddenVideos = new Set();
   youTube = new YouTube();
   element = new Element();
   updateVideoCount = debounce(() => {
@@ -86,9 +86,9 @@ export default class Filter {
 
     this.cleanUpProcedures.push(
       () => {
-        this.videoElementsHidden.clear();
+        this.hiddenVideos.clear();
         console.info(
-          `Cleared the Set of ${this.videoElementsHidden.size} hidden video elements`,
+          `Cleared the Set of ${this.hiddenVideos.size} hidden video elements`,
         );
       },
       () => {
@@ -160,7 +160,7 @@ export default class Filter {
 
         if (
           !videoElement ||
-          this.videoElementsHidden.has(videoElement) ||
+          this.hiddenVideos.has(videoElement) ||
           !this.shouldHideVideo(triggeringElement)
         ) {
           return;
@@ -174,7 +174,7 @@ export default class Filter {
         );
 
         if (triggeringElementIsVideo) {
-          this.videoElementsHidden.delete(triggeringElement);
+          this.hiddenVideos.delete(triggeringElement);
         }
         break;
       default:
@@ -196,7 +196,7 @@ export default class Filter {
 
   private hideVideo(video: HTMLElement) {
     Dom.setVisibility(video, true);
-    this.videoElementsHidden.add(video);
+    this.hiddenVideos.add(video);
   }
 
   private showVideo(video: HTMLElement) {
