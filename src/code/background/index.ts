@@ -28,10 +28,33 @@ browser.tabs.onUpdated.addListener(async (_tabId, changeInfo, tab) => {
 
 // Update when the storage state changes
 addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
-  if (changes.extensionIsEnabled) {
-    void update({
-      browserEvent: BrowserEvents.StorageOnChanged,
-      extensionIsEnabled: changes.extensionIsEnabled.newValue,
-    });
+  const browserEvent = BrowserEvents.StorageOnChanged;
+  const updatableChanges = [
+    changes.extensionIsEnabled,
+    changes.filters,
+    changes.options,
+  ];
+
+  const noUpdatableChangesMade = !updatableChanges.some((hasChanged) =>
+    Boolean(hasChanged),
+  );
+
+  if (noUpdatableChangesMade) {
+    return;
   }
+
+  const updateProperties = {
+    browserEvent,
+    ...(changes.extensionIsEnabled && {
+      extensionIsEnabled: changes.extensionIsEnabled.newValue,
+    }),
+    ...(changes.filters && {
+      filters: changes.filters.newValue,
+    }),
+    ...(changes.options && {
+      options: changes.options.newValue,
+    }),
+  };
+
+  void update(updateProperties);
 });
