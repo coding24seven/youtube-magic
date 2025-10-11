@@ -177,8 +177,6 @@ export function addBrowserStorageListener(
   callbackListener: (changes: StateChanges) => void,
 ) {
   const listener = async (changes: StateChanges, area: string) => {
-    console.info("storage.onChanged, changes:", changes);
-
     if (area !== "local") {
       return;
     }
