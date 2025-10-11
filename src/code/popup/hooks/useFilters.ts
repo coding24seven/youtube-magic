@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { isFilterEnabled, toggleFilter } from "../../browser-api";
+import { loadFilters, toggleFilter } from "../../browser-api";
 import { FilterNames } from "../../types";
 
 const initialFiltersSelectState: Record<FilterNames, boolean> = {
@@ -11,13 +11,13 @@ export const useFilters = () => {
   const [filterSelect, setFilterSelect] = useState(initialFiltersSelectState);
 
   useEffect(() => {
-    async function loadFilters() {
+    async function setFilters() {
       for (const filterName of Object.values(FilterNames)) {
-        const isEnabled = await isFilterEnabled(filterName);
+        const isEnabled = (await loadFilters())[filterName];
         setFilterSelect((prev) => ({ ...prev, [filterName]: isEnabled }));
       }
     }
-    void loadFilters();
+    void setFilters();
   }, []);
 
   const handleFiltersChange = (event: ChangeEvent<HTMLInputElement>) => {

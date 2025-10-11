@@ -3,7 +3,7 @@ export enum FilterNames {
   MembersOnly = "membersOnly",
 }
 
-export type Filters = Partial<Record<FilterNames, boolean>>;
+export type Filters = Record<FilterNames, boolean>;
 
 export enum ViewOptionNames {
   VideoNumbersAreShown = "videoNumbersAreShown",

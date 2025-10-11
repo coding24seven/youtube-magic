@@ -1,6 +1,6 @@
 export enum BrowserEvents {
-  TabsOnActivated = "browser.tabs.OnActivated",
-  TabsOnUpdated = "browser.tabs.OnUpdated",
+  TabsOnActivated = "browser.tabs.OnActivated" /* user switched to new tab */,
+  TabsOnUpdated = "browser.tabs.OnUpdated" /* url changed in the same tab, with or without page reload */,
   StorageOnChanged = "browser.storage.onChanged",
 }
 

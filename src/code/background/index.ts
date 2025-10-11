@@ -1,11 +1,21 @@
-import { addBrowserStorageListener, update } from "../browser-api";
+import {
+  addBrowserStorageListener,
+  update,
+  updateExtensionIcon,
+} from "../browser-api";
 import { debounceUpdate } from "./utils";
 import { BrowserEvents } from "../content/events";
 import { StateChanges } from "../browser-api/types";
 
-console.info("background script running");
+addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
+  if (changes.extensionIsEnabled) {
+    void updateExtensionIcon({
+      extensionIsEnabled: changes.extensionIsEnabled.newValue,
+    });
+  }
+});
 
-// Update when the active tab changes
+/* when user switches to new tab */
 browser.tabs.onActivated.addListener(async (info) => {
   console.info("browser.tabs.onActivated, info:", info);
   void update({
@@ -18,43 +28,9 @@ const getDebouncedTab = debounceUpdate(100);
 browser.tabs.onUpdated.addListener(async (_tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.active) {
     const lastTab = await getDebouncedTab(tab);
-    console.info("browser.tabs.onUpdated, tab:", lastTab, changeInfo);
     void update({
       browserEvent: BrowserEvents.TabsOnUpdated,
       activeTab: lastTab,
     });
   }
-});
-
-// Update when the storage state changes
-addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
-  const browserEvent = BrowserEvents.StorageOnChanged;
-  const updatableChanges = [
-    changes.extensionIsEnabled,
-    changes.filters,
-    changes.options,
-  ];
-
-  const noUpdatableChangesMade = !updatableChanges.some((hasChanged) =>
-    Boolean(hasChanged),
-  );
-
-  if (noUpdatableChangesMade) {
-    return;
-  }
-
-  const updateProperties = {
-    browserEvent,
-    ...(changes.extensionIsEnabled && {
-      extensionIsEnabled: changes.extensionIsEnabled.newValue,
-    }),
-    ...(changes.filters && {
-      filters: changes.filters.newValue,
-    }),
-    ...(changes.options && {
-      options: changes.options.newValue,
-    }),
-  };
-
-  void update(updateProperties);
 });

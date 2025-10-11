@@ -2,17 +2,39 @@
 /* `browser.storage` API is available from all scripts */
 
 import {
-  MessagePayload,
+  UpdateProperties,
+  MessageToContentPayload,
   State,
   StateChanges,
   UpdateIconProperties,
-  UpdateStateProperties,
 } from "./types";
 import YouTube from "../utils/youtube";
 import { FilterNames, ViewOptionNames } from "../types";
 import Tab = browser.tabs.Tab;
 
 const youTube = new YouTube();
+
+const initialFilters = {
+  watched: true,
+  membersOnly: false,
+};
+
+const initialOptions = {
+  videoNumbersAreShown: false,
+};
+
+async function init() {
+  const state = await loadState();
+  if (!state.filters) {
+    state.filters = initialFilters;
+  }
+
+  if (!state.options) {
+    state.options = initialOptions;
+  }
+}
+
+void init();
 
 export function loadState() {
   return browser.storage.local.get() as Promise<State>;
@@ -32,8 +54,8 @@ export async function toggleExtensionIsEnabled() {
   });
 }
 
-export async function isFilterEnabled(filterName: FilterNames) {
-  return !!(await loadState()).filters?.[filterName];
+export async function loadFilters() {
+  return (await loadState()).filters;
 }
 
 export async function toggleFilter(filterName: FilterNames) {
@@ -44,8 +66,8 @@ export async function toggleFilter(filterName: FilterNames) {
   });
 }
 
-export async function isOptionEnabled(optionName: ViewOptionNames) {
-  return !!(await loadState()).options?.[optionName];
+export async function loadOptions() {
+  return (await loadState()).options;
 }
 
 export async function toggleOption(optionName: ViewOptionNames) {
@@ -84,7 +106,7 @@ export async function queryActiveTab() {
 
 export async function sendMessageToContent(
   activeTabId: number | undefined,
-  payload: MessagePayload,
+  payload: MessageToContentPayload,
 ) {
   if (typeof activeTabId !== "number") {
     console.error("missing activeTabId");
@@ -95,12 +117,19 @@ export async function sendMessageToContent(
   await browser.tabs.sendMessage(activeTabId, payload);
 }
 
+/*
+ * updates popup icon
+ * sends message from background script to content script, on relevant YouTube pages, when user has switched to new tab or url has changed in the same tab
+ */
 export async function update({
-  extensionIsEnabled,
   browserEvent,
   activeTab,
-}: UpdateStateProperties) {
-  const isEnabled = extensionIsEnabled || (await isExtensionEnabled());
+}: UpdateProperties) {
+  const extensionIsEnabled = await isExtensionEnabled();
+  void updateExtensionIcon({ extensionIsEnabled });
+
+  if (!extensionIsEnabled) return;
+
   const tab = activeTab || (await queryActiveTab());
   const tabId = tab.id;
   const tabUrl = tab.url;
@@ -114,19 +143,17 @@ export async function update({
   if (currentYouTubePageType) {
     void sendMessageToContent(tabId, {
       browserEvent,
-      extensionIsEnabled: isEnabled,
-      tabId,
-      currentYouTubePageType: currentYouTubePageType,
+      tabId /* redundant atm */,
     });
   }
-
-  void updateExtensionIcon({ extensionIsEnabled: isEnabled, tabUrl: tabUrl });
 }
 
 export async function updateExtensionIcon({
   extensionIsEnabled,
-  tabUrl,
 }: UpdateIconProperties) {
+  const tab = await queryActiveTab();
+  const tabUrl = tab.url;
+
   const iconPath =
     extensionIsEnabled && (await extensionCanRunOnCurrentPageType(tabUrl))
       ? "media/icons/extension-is-enabled.png"
@@ -148,7 +175,7 @@ export async function extensionCanRunOnCurrentPageType(activeTabUrl?: string) {
 
 export function addBrowserStorageListener(
   eventName: "onChanged",
-  callbackListener: (changes: any) => void,
+  callbackListener: (changes: StateChanges) => void,
 ) {
   const listener = async (changes: StateChanges, area: string) => {
     console.info("storage.onChanged, changes:", changes);
@@ -166,8 +193,4 @@ export function addBrowserStorageListener(
       break;
     default:
   }
-
-  return () => {
-    browser.storage.onChanged.removeListener(listener);
-  };
 }

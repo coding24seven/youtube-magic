@@ -3,10 +3,10 @@ import Observer, {
   EmittedNodeEventHandler,
   ObservedElementDetail,
 } from "./observer";
-import { YouTubePageTypes } from "./types";
 import Element from "./element";
-import { MessagePayload } from "../browser-api/types";
+import { MessageToContentPayload, StateChanges } from "../browser-api/types";
 import {
+  addBrowserStorageListener,
   isExtensionEnabled,
   updateHiddenVideoCount,
   updateVideoCount,
@@ -15,16 +15,12 @@ import { debounce } from "../utils";
 import { selectors } from "./selectors";
 import YouTube from "../utils/youtube";
 import Dom from "./dom";
-
-export interface Options {
-  watchedFilterEnabled: boolean;
-  membersOnlyFilterEnabled: boolean;
-  videoNumbersAreShown: boolean;
-}
+import { Filters, Options } from "../types";
 
 export default class Filter {
-  watchedFilterEnabled: boolean = true;
-  membersOnlyFilterEnabled: boolean = true;
+  watchedFilterEnabled = true;
+  membersOnlyFilterEnabled = false;
+  videoNumbersAreShown = false;
   hiddenVideos = new Set();
   youTube = new YouTube();
   element = new Element();
@@ -33,23 +29,23 @@ export default class Filter {
     void updateHiddenVideoCount(this.element.hiddenVideoCount);
   }, 100);
   numberVideos = debounce(async () => {
-    if (
-      (await isExtensionEnabled()) &&
-      this.options.videoNumbersAreShown &&
-      process.env.NODE_ENV === "development"
-    ) {
-      this.options.videoNumbersAreShown && this.element.numberVideos();
+    if (this.videoNumbersAreShown && (await isExtensionEnabled())) {
+      this.element.numberVideos();
     }
   }, 100);
 
   cleanUpProcedures: (() => void)[] = [];
 
-  public constructor(public options: Options) {
-    this.watchedFilterEnabled = this.options.watchedFilterEnabled;
-    this.membersOnlyFilterEnabled = this.options.membersOnlyFilterEnabled;
+  public constructor(filters: Filters, options: Options) {
+    const { watched, membersOnly } = filters;
+    const { videoNumbersAreShown } = options;
+    this.watchedFilterEnabled = watched;
+    this.membersOnlyFilterEnabled = membersOnly;
+    this.videoNumbersAreShown = videoNumbersAreShown;
 
     this.addYtNavigateFinishEventListener();
-    this.establishCommunicationWithBackground();
+    this.listenForMessageFromBackground();
+    this.listenForBrowserStorageChanges();
   }
 
   get youTubePageType() {
@@ -75,10 +71,10 @@ export default class Filter {
     }
   }
 
-  private async run(pageType: YouTubePageTypes) {
-    console.info(`*** Running filter on ${pageType} ***`);
+  private async run() {
+    this.element.pageType = this.youTubePageType;
+    console.info(`*** Running filter on ${this.element.pageType} ***`);
 
-    this.element.pageType = pageType;
     const contents = await this.element.waitForAndGetAndSetContents();
     const { videoElementTagName } = this.element;
     this.addContentsObserver(contents, videoElementTagName);
@@ -92,11 +88,7 @@ export default class Filter {
         );
       },
       () => {
-        if (
-          this.options.videoNumbersAreShown &&
-          process.env.NODE_ENV === "development" &&
-          contents
-        ) {
+        if (contents) {
           const unNumberedVideoCount = this.element.unNumberVideos();
           console.info(
             `Removed ${unNumberedVideoCount} ${selectors.videoNumberClass} elements from the DOM`,
@@ -204,8 +196,15 @@ export default class Filter {
   }
 
   private async filterLoadedVideos() {
+    const extensionIsEnabled = await isExtensionEnabled();
+
     for (const video of this.element.videos) {
-      if ((await isExtensionEnabled()) && this.shouldHideVideo(video)) {
+      if (!extensionIsEnabled) {
+        this.showVideo(video);
+        break;
+      }
+
+      if (this.shouldHideVideo(video)) {
         this.hideVideo(video);
       } else {
         this.showVideo(video);
@@ -213,7 +212,10 @@ export default class Filter {
     }
 
     this.updateVideoCount();
-    this.numberVideos();
+
+    if (extensionIsEnabled && this.videoNumbersAreShown) {
+      this.element.numberVideos();
+    }
   }
 
   private addChipsListener() {
@@ -224,7 +226,7 @@ export default class Filter {
         this.cleanUp();
 
         if (await isExtensionEnabled()) {
-          void this.run(this.youTubePageType);
+          void this.run();
         }
       }
     };
@@ -250,7 +252,7 @@ export default class Filter {
 
       try {
         if (await isExtensionEnabled()) {
-          void this.run(this.youTubePageType);
+          void this.run();
         }
       } catch (e) {
         console.info(
@@ -262,50 +264,55 @@ export default class Filter {
     window.addEventListener(youTubeEvents.ytNavigateFinish, handler);
   }
 
-  private establishCommunicationWithBackground() {
-    // Listen for toggle messages initiated by popup and by background script, which are sent while on YouTubePageTypes pages only
+  private listenForBrowserStorageChanges() {
+    addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
+      const { extensionIsEnabled } = changes;
+
+      if (!extensionIsEnabled) return;
+
+      if (extensionIsEnabled.newValue) {
+        this.cleanUp();
+        void this.run();
+      } else {
+        await this.filterLoadedVideos();
+        this.cleanUp();
+      }
+    });
+
+    addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
+      const { filters } = changes;
+
+      if (!filters) return;
+
+      this.watchedFilterEnabled = filters.newValue.watched;
+      this.membersOnlyFilterEnabled = filters.newValue.membersOnly;
+
+      await this.filterLoadedVideos();
+    });
+
+    addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
+      const { options } = changes;
+
+      if (!options) return;
+
+      this.videoNumbersAreShown = options.newValue.videoNumbersAreShown;
+
+      if (this.videoNumbersAreShown) {
+        this.element.numberVideos();
+      } else {
+        this.element.unNumberVideos();
+      }
+    });
+  }
+
+  private listenForMessageFromBackground() {
     browser.runtime.onMessage.addListener(
-      async (message: MessagePayload, _sender, _sendResponse) => {
-        const {
-          tabId,
-          extensionIsEnabled,
-          browserEvent,
-          currentYouTubePageType,
-        } = message;
+      async (message: MessageToContentPayload, _sender, _sendResponse) => {
+        const { browserEvent } = message;
 
-        console.info("tabId:", tabId);
-        console.info("browser event:", browserEvent);
-
-        if (
-          currentYouTubePageType &&
-          extensionIsEnabled &&
-          [
-            BrowserEvents.StorageOnChanged /* extension just toggled on */,
-            BrowserEvents.TabsOnActivated /* navigated to new tab */,
-          ].includes(browserEvent)
-        ) {
+        if (BrowserEvents.TabsOnActivated === browserEvent) {
           this.cleanUp();
-          void this.run(currentYouTubePageType);
-
-          return;
-        }
-
-        if (
-          extensionIsEnabled &&
-          BrowserEvents.TabsOnUpdated === browserEvent
-        ) {
-          /* BrowserEvents.TabsOnUpdated debounced can fire even after youTubeEvents.ytNavigateFinish, on full page reload, which makes it useless for handling any logic */
-
-          return;
-        }
-
-        if (
-          /* extension just toggled off */
-          !extensionIsEnabled &&
-          BrowserEvents.StorageOnChanged === browserEvent
-        ) {
-          await this.filterLoadedVideos();
-          this.cleanUp();
+          void this.run();
         }
       },
     );
