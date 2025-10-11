@@ -27,13 +27,13 @@ async function init() {
   const state = await loadState();
   if (!state.filters) {
     state.filters = initialFilters;
+    void setState(state);
   }
 
   if (!state.options) {
     state.options = initialOptions;
+    void setState(state);
   }
-
-  void setState(state);
 }
 
 void init();
