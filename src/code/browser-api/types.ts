@@ -11,7 +11,10 @@ export interface State {
 }
 
 export type StateChanges = {
-  [K in keyof State]?: { newValue: NonNullable<State[K]> };
+  [K in keyof State]?: {
+    oldValue: NonNullable<State[K]>;
+    newValue: NonNullable<State[K]>;
+  };
 };
 
 export interface MessageToContentPayload {

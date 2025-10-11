@@ -32,6 +32,8 @@ async function init() {
   if (!state.options) {
     state.options = initialOptions;
   }
+
+  void setState(state);
 }
 
 void init();
@@ -121,10 +123,7 @@ export async function sendMessageToContent(
  * updates popup icon
  * sends message from background script to content script, on relevant YouTube pages, when user has switched to new tab or url has changed in the same tab
  */
-export async function update({
-  browserEvent,
-  activeTab,
-}: UpdateProperties) {
+export async function update({ browserEvent, activeTab }: UpdateProperties) {
   const extensionIsEnabled = await isExtensionEnabled();
   void updateExtensionIcon({ extensionIsEnabled });
 
