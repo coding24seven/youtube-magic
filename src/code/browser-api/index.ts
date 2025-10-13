@@ -191,3 +191,15 @@ export function addBrowserStorageListener(
     default:
   }
 }
+
+/*
+ * content script retrieves current-tab id and active tab id from background script, which has access to `browser.tabs`, and compares them
+ */
+export async function isActiveTab() {
+  const { currentTabId, activeTabId } = await browser.runtime.sendMessage({
+    action: "getTabIds",
+  });
+  return (
+    !isNaN(currentTabId) && !isNaN(activeTabId) && currentTabId === activeTabId
+  );
+}

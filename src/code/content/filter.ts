@@ -7,6 +7,7 @@ import Element from "./element";
 import { MessageToContentPayload, StateChanges } from "../browser-api/types";
 import {
   addBrowserStorageListener,
+  isActiveTab,
   isExtensionEnabled,
   updateHiddenVideoCount,
   updateVideoCount,
@@ -201,7 +202,7 @@ export default class Filter {
     for (const video of this.element.videos) {
       if (!extensionIsEnabled) {
         this.showVideo(video);
-        break;
+        continue;
       }
 
       if (this.shouldHideVideo(video)) {
@@ -268,7 +269,7 @@ export default class Filter {
     addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
       const { extensionIsEnabled } = changes;
 
-      if (!extensionIsEnabled) return;
+      if (!(extensionIsEnabled && (await isActiveTab()))) return;
 
       if (extensionIsEnabled.newValue) {
         this.cleanUp();
@@ -282,7 +283,7 @@ export default class Filter {
     addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
       const { filters } = changes;
 
-      if (!filters) return;
+      if (!(filters && (await isActiveTab()))) return;
 
       this.watchedFilterEnabled = filters.newValue.watched;
       this.membersOnlyFilterEnabled = filters.newValue.membersOnly;
@@ -293,7 +294,7 @@ export default class Filter {
     addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
       const { options } = changes;
 
-      if (!options) return;
+      if (!(options && (await isActiveTab()))) return;
 
       this.videoNumbersAreShown = options.newValue.videoNumbersAreShown;
 

@@ -1,5 +1,6 @@
 import {
   addBrowserStorageListener,
+  queryActiveTab,
   update,
   updateExtensionIcon,
 } from "../browser-api";
@@ -34,3 +35,25 @@ browser.tabs.onUpdated.addListener(async (_tabId, changeInfo, tab) => {
     });
   }
 });
+
+/*
+ * gets tab ids and sends them back to content script
+ * `sendResponse` is not used as it requires a callback argument in `browser.runtime.sendMessage`
+ */
+browser.runtime.onMessage.addListener(
+  async (message: { action: "getTabIds" }, sender, _sendResponse) => {
+    if (message.action !== "getTabIds") {
+      throw new Error("actions other than `getTabIds` are not allowed");
+    }
+
+    const activeTab = await queryActiveTab();
+    const activeTabId = activeTab.id;
+
+    if (!sender.tab) {
+      console.info("getTabIds: No tab object exists on sender");
+      return { currentTabId: null, activeTabId };
+    }
+
+    return { currentTabId: sender.tab.id, activeTabId };
+  },
+);
