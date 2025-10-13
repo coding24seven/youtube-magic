@@ -19,7 +19,8 @@ export type StateChanges = {
 
 export interface MessageToContentPayload {
   browserEvent: BrowserEvents;
-  tabId: number | undefined;
+  previousTabId: number | undefined;
+  activeTabId: number | undefined;
 }
 
 export interface UpdateIconProperties {
@@ -29,4 +30,5 @@ export interface UpdateIconProperties {
 export interface UpdateProperties {
   browserEvent: BrowserEvents;
   activeTab?: Tab;
+  previousTabId?: number | undefined;
 }
