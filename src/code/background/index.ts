@@ -1,7 +1,7 @@
 import {
   addBrowserStorageListener,
   queryActiveTab,
-  update,
+  updateCurrentTabContent,
   updateExtensionIcon,
 } from "../browser-api";
 import { debounceUpdate } from "./utils";
@@ -18,8 +18,7 @@ addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
 
 /* when user switches to new tab */
 browser.tabs.onActivated.addListener(async (info) => {
-  console.info("browser.tabs.onActivated, info:", info);
-  void update({
+  void updateCurrentTabContent({
     browserEvent: BrowserEvents.TabsOnActivated,
   });
 });
@@ -29,7 +28,7 @@ const getDebouncedTab = debounceUpdate(100);
 browser.tabs.onUpdated.addListener(async (_tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.active) {
     const lastTab = await getDebouncedTab(tab);
-    void update({
+    void updateCurrentTabContent({
       browserEvent: BrowserEvents.TabsOnUpdated,
       activeTab: lastTab,
     });

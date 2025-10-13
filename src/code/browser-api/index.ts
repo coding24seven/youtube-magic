@@ -121,9 +121,12 @@ export async function sendMessageToContent(
 
 /*
  * updates popup icon
- * sends message from background script to content script, on relevant YouTube pages, when user has switched to new tab or url has changed in the same tab
+ * sends message from background script to current tab's content script, on relevant YouTube pages, when user has switched to new tab or url has changed in the same tab
  */
-export async function update({ browserEvent, activeTab }: UpdateProperties) {
+export async function updateCurrentTabContent({
+  browserEvent,
+  activeTab,
+}: UpdateProperties) {
   const extensionIsEnabled = await isExtensionEnabled();
   void updateExtensionIcon({ extensionIsEnabled });
 
