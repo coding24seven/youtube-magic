@@ -1,8 +1,8 @@
 import {
   addBrowserStorageListener,
   queryActiveTab,
-  updateCurrentTabContent,
   updateExtensionIcon,
+  updateTabContent,
 } from "../browser-api";
 import { debounceUpdate } from "./utils";
 import { BrowserEvents } from "../content/events";
@@ -18,8 +18,9 @@ addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
 
 /* when user switches to new tab */
 browser.tabs.onActivated.addListener(async (info) => {
-  void updateCurrentTabContent({
+  void updateTabContent({
     browserEvent: BrowserEvents.TabsOnActivated,
+    previousTabId: info.previousTabId,
   });
 });
 
@@ -28,7 +29,7 @@ const getDebouncedTab = debounceUpdate(100);
 browser.tabs.onUpdated.addListener(async (_tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.active) {
     const lastTab = await getDebouncedTab(tab);
-    void updateCurrentTabContent({
+    void updateTabContent({
       browserEvent: BrowserEvents.TabsOnUpdated,
       activeTab: lastTab,
     });
@@ -36,6 +37,7 @@ browser.tabs.onUpdated.addListener(async (_tabId, changeInfo, tab) => {
 });
 
 /*
+ * Only one `onMessage` listener can be added, as non-relevant listeners will return `undefined` to `sendMessage` call if they fire first
  * gets tab ids and sends them back to content script
  * `sendResponse` is not used as it requires a callback argument in `browser.runtime.sendMessage`
  */
@@ -50,9 +52,9 @@ browser.runtime.onMessage.addListener(
 
     if (!sender.tab) {
       console.info("getTabIds: No tab object exists on sender");
-      return { currentTabId: null, activeTabId };
+      return { activeTabId };
     }
 
-    return { currentTabId: sender.tab.id, activeTabId };
+    return { contentTabId: sender.tab.id, activeTabId };
   },
 );

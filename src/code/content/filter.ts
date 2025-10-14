@@ -7,6 +7,7 @@ import Element from "./element";
 import { MessageToContentPayload, StateChanges } from "../browser-api/types";
 import {
   addBrowserStorageListener,
+  getTabIds,
   isActiveTab,
   isExtensionEnabled,
   updateHiddenVideoCount,
@@ -309,10 +310,24 @@ export default class Filter {
   private listenForMessageFromBackground() {
     browser.runtime.onMessage.addListener(
       async (message: MessageToContentPayload, _sender, _sendResponse) => {
-        const { browserEvent } = message;
+        const { previousTabId, activeTabId, browserEvent } = message;
 
-        if (BrowserEvents.TabsOnActivated === browserEvent) {
+        if (BrowserEvents.TabsOnActivated !== browserEvent) return;
+
+        const { contentTabId } = await getTabIds();
+
+        const isPreviousTab =
+          previousTabId !== undefined && previousTabId === contentTabId;
+
+        if (isPreviousTab) {
           this.cleanUp();
+          return;
+        }
+
+        const isActiveTab =
+          activeTabId !== undefined && activeTabId === contentTabId;
+
+        if (isActiveTab) {
           void this.run();
         }
       },

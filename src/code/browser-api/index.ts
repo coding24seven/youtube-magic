@@ -2,11 +2,11 @@
 /* `browser.storage` API is available from all scripts */
 
 import {
-  UpdateProperties,
   MessageToContentPayload,
   State,
   StateChanges,
   UpdateIconProperties,
+  UpdateProperties,
 } from "./types";
 import YouTube from "../utils/youtube";
 import { FilterNames, ViewOptionNames } from "../types";
@@ -106,26 +106,36 @@ export async function queryActiveTab() {
   return activeBrowserTab;
 }
 
-export async function sendMessageToContent(
-  activeTabId: number | undefined,
-  payload: MessageToContentPayload,
-) {
+export async function sendMessageToContent(payload: MessageToContentPayload) {
+  const { previousTabId, activeTabId } = payload;
+
   if (typeof activeTabId !== "number") {
     console.error("missing activeTabId");
 
     return;
   }
 
-  await browser.tabs.sendMessage(activeTabId, payload);
+  try {
+    await browser.tabs.sendMessage(activeTabId, payload);
+
+    if (previousTabId !== undefined) {
+      await browser.tabs.sendMessage(previousTabId, payload);
+    }
+  } catch (_error) {
+    console.info(
+      `Content instance with tabId: ${previousTabId} is not listening for message`,
+    );
+  }
 }
 
 /*
  * updates popup icon
- * sends message from background script to current tab's content script, on relevant YouTube pages, when user has switched to new tab or url has changed in the same tab
+ * sends message from background script to active tab's content script, and optionally to previous tab's content script, on relevant YouTube pages, when user has switched to new tab or url has changed in the same tab
  */
-export async function updateCurrentTabContent({
+export async function updateTabContent({
   browserEvent,
   activeTab,
+  previousTabId,
 }: UpdateProperties) {
   const extensionIsEnabled = await isExtensionEnabled();
   void updateExtensionIcon({ extensionIsEnabled });
@@ -133,19 +143,20 @@ export async function updateCurrentTabContent({
   if (!extensionIsEnabled) return;
 
   const tab = activeTab || (await queryActiveTab());
-  const tabId = tab.id;
-  const tabUrl = tab.url;
+  const activeTabId = tab.id;
+  const activeTabUrl = tab.url;
 
-  if (!tabId || !tabUrl) {
-    throw new Error(`tabId: ${tabId}. tabUrl: ${tabUrl}`);
+  if (!activeTabId || !activeTabUrl) {
+    throw new Error(`tabId: ${activeTabId}. tabUrl: ${activeTabUrl}`);
   }
 
-  const currentYouTubePageType = youTube.getActionablePageType(tabUrl);
+  const currentYouTubePageType = youTube.getActionablePageType(activeTabUrl);
 
   if (currentYouTubePageType) {
-    void sendMessageToContent(tabId, {
+    void sendMessageToContent({
       browserEvent,
-      tabId /* redundant atm */,
+      activeTabId,
+      previousTabId,
     });
   }
 }
@@ -196,13 +207,19 @@ export function addBrowserStorageListener(
 }
 
 /*
- * content script retrieves current-tab id and active tab id from background script, which has access to `browser.tabs`, and compares them
+ * content script retrieves content-tab id and active-tab id from background script, which has access to `browser.tabs`, and compares them
  */
 export async function isActiveTab() {
-  const { currentTabId, activeTabId } = await browser.runtime.sendMessage({
+  const { contentTabId, activeTabId } = await getTabIds();
+
+  return contentTabId !== undefined && contentTabId === activeTabId;
+}
+
+export function getTabIds(): Promise<{
+  contentTabId?: number;
+  activeTabId: number;
+}> {
+  return browser.runtime.sendMessage({
     action: "getTabIds",
   });
-  return (
-    !isNaN(currentTabId) && !isNaN(activeTabId) && currentTabId === activeTabId
-  );
 }
