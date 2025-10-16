@@ -43,7 +43,13 @@
     margin-bottom: 0.5rem;
   }
 
-  &__video-count {
+  &__video-count-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__video-count-item {
     margin-top: 0.5rem;
     margin-bottom: 0;
     white-space: pre;
