@@ -9,7 +9,7 @@ interface Props {
 
 const SelectItem = ({ name, checked, title, handleSelectChange }: Props) => {
   return (
-    <li>
+    <li className="youtube-magic-popup__select-item">
       <label>
         <input
           type="checkbox"
