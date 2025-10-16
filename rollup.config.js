@@ -29,7 +29,7 @@ export default [
         targets: [{ src: ["src/**/*", "!**/*/code"], dest: outputDir }],
         flatten: false,
       }),
-      typescript(),
+      typescript({ abortOnError: isProduction }),
       replace({
         "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
         preventAssignment: true,
@@ -65,9 +65,7 @@ export default [
         browser: true /* Resolves import paths such as that of `react` or `lodash` to node_modules/react/index.js so rollup can locate imported package */,
       }),
       commonjs() /* Converts CommonJS modules in React to ES6 modules */,
-      typescript({
-        sourceMap: !isProduction,
-      }),
+      typescript({ abortOnError: isProduction }),
       isProduction && terser,
       getSass({
         output: path.join(outputDir, "code", "popup", "styles.css"),
@@ -83,6 +81,9 @@ export default [
       entryFileNames: "code/background/[name].js",
       sourcemap: !isProduction,
     },
-    plugins: [typescript(), isProduction && terser],
+    plugins: [
+      typescript({ abortOnError: isProduction }),
+      isProduction && terser,
+    ],
   },
 ];
