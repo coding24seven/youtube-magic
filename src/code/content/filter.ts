@@ -84,10 +84,10 @@ export default class Filter {
 
     this.cleanUpProcedures.push(
       () => {
-        this.hiddenVideos.clear();
         console.info(
           `Cleared the Set of ${this.hiddenVideos.size} hidden video elements`,
         );
+        this.hiddenVideos.clear();
       },
       () => {
         if (contents) {
