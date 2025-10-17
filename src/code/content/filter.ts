@@ -310,25 +310,44 @@ export default class Filter {
   private listenForMessageFromBackground() {
     browser.runtime.onMessage.addListener(
       async (message: MessageToContentPayload, _sender, _sendResponse) => {
-        const { previousTabId, activeTabId, browserEvent } = message;
+        const { activeTabId, browserEvent } = message;
 
-        if (BrowserEvents.TabsOnActivated !== browserEvent) return;
-
-        const { contentTabId } = await getTabIds();
-
-        const isPreviousTab =
-          previousTabId !== undefined && previousTabId === contentTabId;
-
-        if (isPreviousTab) {
-          this.cleanUp();
+        if (
+          ![
+            BrowserEvents.TabsOnActivated,
+            BrowserEvents.ManagementOnInstalled,
+          ].includes(browserEvent) ||
+          activeTabId === undefined
+        ) {
           return;
         }
 
-        const isActiveTab =
-          activeTabId !== undefined && activeTabId === contentTabId;
+        const { contentTabId } = await getTabIds();
+        const isActiveTab = activeTabId === contentTabId;
 
         if (isActiveTab) {
           void this.run();
+        }
+      },
+    );
+
+    browser.runtime.onMessage.addListener(
+      async (message: MessageToContentPayload, _sender, _sendResponse) => {
+        const { previousTabId, browserEvent } = message;
+
+        if (
+          BrowserEvents.TabsOnActivated !== browserEvent ||
+          previousTabId === undefined
+        ) {
+          return;
+        }
+
+        const { contentTabId } = await getTabIds();
+
+        const isPreviousTab = previousTabId === contentTabId;
+
+        if (isPreviousTab) {
+          this.cleanUp();
         }
       },
     );

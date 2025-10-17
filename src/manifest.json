@@ -3,7 +3,7 @@
   "name": "YouTube Magic",
   "version": "1.0.0",
   "description": "Hides unwanted YouTube videos using UI indicators.",
-  "permissions": ["tabs", "activeTab", "storage"],
+  "permissions": ["management", "tabs", "activeTab", "storage"],
   "background": {
     "scripts": ["code/background/index.js"]
   },

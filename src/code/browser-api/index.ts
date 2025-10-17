@@ -116,10 +116,12 @@ export async function sendMessageToContent(payload: MessageToContentPayload) {
   }
 
   try {
-    await browser.tabs.sendMessage(activeTabId, payload);
+    const { previousTabId, ...activeTabPayload } = payload;
+    await browser.tabs.sendMessage(activeTabId, activeTabPayload);
 
     if (previousTabId !== undefined) {
-      await browser.tabs.sendMessage(previousTabId, payload);
+      const { activeTabId, ...previousTabPayload } = payload;
+      await browser.tabs.sendMessage(previousTabId, previousTabPayload);
     }
   } catch (_error) {
     console.info(

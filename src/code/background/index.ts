@@ -58,3 +58,9 @@ browser.runtime.onMessage.addListener(
     return { contentTabId: sender.tab.id, activeTabId };
   },
 );
+
+browser.management.onInstalled.addListener((_info) => {
+  void updateTabContent({
+    browserEvent: BrowserEvents.ManagementOnInstalled,
+  });
+});

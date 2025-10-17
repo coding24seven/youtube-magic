@@ -19,7 +19,7 @@ export type StateChanges = {
 
 export interface MessageToContentPayload {
   browserEvent: BrowserEvents;
-  previousTabId: number | undefined;
+  previousTabId?: number;
   activeTabId: number | undefined;
 }
 
