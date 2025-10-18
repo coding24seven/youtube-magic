@@ -1,0 +1,79 @@
+.youtube-magic-popup {
+  $textColor: #f1f1f1;
+  $warningColor: #f28c38;
+  $redDefaultColor: #cc0000;
+
+  margin: 0;
+  padding: 0.75rem;
+  background-color: #1a1818;
+  color: $textColor;
+  font-family: "Roboto", Arial, sans-serif;
+
+  input[type="checkbox"],
+  label:has(input[type="checkbox"]) {
+    cursor: pointer;
+  }
+
+  input[type="checkbox"] {
+    margin-right: 0.5rem;
+    accent-color: $redDefaultColor;
+  }
+
+  &__toggle-extension {
+    padding: 0.3rem 0.6rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 0.4rem;
+    background-color: $redDefaultColor;
+    transition: background-color 0.2s;
+    color: white;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #ff0000;
+    }
+
+    &:active {
+      background-color: #b30000;
+    }
+  }
+
+  &__video-count-heading {
+    margin-bottom: 0.5rem;
+  }
+
+  &__video-count-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__video-count-item {
+    margin-top: 0.4rem;
+    margin-bottom: 0;
+    white-space: pre;
+  }
+
+  &__extension-should-not-run {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    font-style: italic;
+    color: $warningColor;
+  }
+
+  &__select-heading {
+    margin-top: 1rem;
+    margin-bottom: 0;
+  }
+
+  &__select-list {
+    margin-top: 0.5rem;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  &__select-item {
+    margin-top: 0.3rem;
+  }
+}

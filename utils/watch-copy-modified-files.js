@@ -4,7 +4,7 @@ import path from "path";
 watchCopyModifiedFiles();
 
 function watchCopyModifiedFiles() {
-  const fileTypes = /.*(?<!\.ts|~)$/; // match file names that do not end with `.ts`, `~` (temporary files created by IDE editor)
+  const fileTypes = /.*(?<!\.tsx?|\.scss|~)$/; // match file names that do not end with `.ts(x)`, `.scss`, `~` (temporary files created by IDE editor)
   const outputDir = "watch-output";
   const debounceMap = new Map(); // Store timeouts for debouncing
   const DEBOUNCE_MS = 100; // Wait 100ms to group events
@@ -55,6 +55,6 @@ function watchCopyModifiedFiles() {
   });
 
   console.info(
-    "watch-copy-modified-files: Watching for non-TypeScript changes in src directory...",
+    "watch-copy-modified-files: Watching for non-TypeScript, non-scss changes in src directory...",
   );
 }

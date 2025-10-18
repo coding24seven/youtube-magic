@@ -30,7 +30,7 @@ export default class Element {
   public get newContents() {
     /* may include invisible elements */
     const contentsElements = Array.from(
-      document.querySelectorAll<HTMLElement>(selectors.contents[this.pageType]),
+      document.querySelectorAll<HTMLElement>(selectors.contents),
     );
 
     if (contentsElements.length === 0) {
@@ -44,7 +44,8 @@ export default class Element {
 
     /* filter out #contents elements that do not contain videos, i.e. #contents elements for viewers' comments */
     const contentsElementsWithVideos = visibleContentsElements.filter(
-      (element) => !!element.querySelector(this.videoElementTagName),
+      (contentsElement) =>
+        !!contentsElement.querySelector(this.videoElementTagName),
     );
 
     const [outerMostContentsElement] = contentsElementsWithVideos;
@@ -131,15 +132,13 @@ export default class Element {
   }
 
   public hasProgressBar(element: HTMLElement) {
-    return !!element.querySelector(selectors.progressBar[this.pageType]);
+    return !!Dom.find(element, selectors.progressBar);
   }
 
   public hasMembersOnlyBadge(element: HTMLElement) {
-    const membersOnlyBadgeElement = element.querySelector(
-      selectors.membersOnlyBadge[this.pageType],
-    );
+    const badge = Dom.find(element, selectors.membersOnlyBadge);
 
-    return !!membersOnlyBadgeElement?.textContent;
+    return !!(badge && badge.textContent);
   }
 
   public hasChipBeenClicked(event: Event) {
@@ -149,7 +148,7 @@ export default class Element {
       (node) =>
         "matches" in node &&
         typeof node.matches === "function" &&
-        node.matches(selectors.chips[this.pageType]),
+        node.matches(selectors.chips),
     );
   }
 

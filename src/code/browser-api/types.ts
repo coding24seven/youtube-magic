@@ -1,31 +1,34 @@
 import Tab = browser.tabs.Tab;
-import { YouTubePageTypes } from "../content/types";
 import { BrowserEvents } from "../content/events";
+import { Filters, Options } from "../types";
 
 export interface State {
   extensionIsEnabled: boolean | undefined;
+  filters: Filters;
+  options: Options;
   videoCount: number | undefined;
   hiddenVideoCount: number | undefined;
 }
 
 export type StateChanges = {
-  [K in keyof State]?: { newValue: NonNullable<State[K]> };
+  [K in keyof State]?: {
+    oldValue: NonNullable<State[K]>;
+    newValue: NonNullable<State[K]>;
+  };
 };
 
-export interface MessagePayload {
+export interface MessageToContentPayload {
   browserEvent: BrowserEvents;
-  tabId: number | undefined;
-  extensionIsEnabled: boolean;
-  currentYouTubePageType: YouTubePageTypes | undefined;
+  previousTabId?: number;
+  activeTabId: number | undefined;
 }
 
 export interface UpdateIconProperties {
-  extensionIsEnabled?: boolean;
-  tabUrl?: string;
+  extensionIsEnabled: boolean;
 }
 
-export interface UpdateStateProperties {
+export interface UpdateProperties {
   browserEvent: BrowserEvents;
-  extensionIsEnabled?: boolean;
   activeTab?: Tab;
+  previousTabId?: number | undefined;
 }

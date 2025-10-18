@@ -1,12 +1,15 @@
 import { compensateForFirefoxBugs } from "./utils";
 import Filter from "./filter";
-
-console.info("*** Content script running ***");
+import "./styles.scss";
+import { loadFilters, loadOptions } from "../browser-api";
 
 compensateForFirefoxBugs();
 
-new Filter({
-  watchedFilterEnabled: true,
-  membersOnlyFilterEnabled: false,
-  showVideoNumbers: true,
-});
+async function main() {
+  const filters = await loadFilters();
+  const options = await loadOptions();
+
+  new Filter(filters, options);
+}
+
+void main();

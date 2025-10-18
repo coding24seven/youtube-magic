@@ -2,16 +2,48 @@
 /* `browser.storage` API is available from all scripts */
 
 import {
-  MessagePayload,
+  MessageToContentPayload,
   State,
   StateChanges,
   UpdateIconProperties,
-  UpdateStateProperties,
+  UpdateProperties,
 } from "./types";
 import YouTube from "../utils/youtube";
+import { FilterNames, ViewOptionNames } from "../types";
 import Tab = browser.tabs.Tab;
 
 const youTube = new YouTube();
+
+const initialExtensionIsEnabled = true;
+
+const initialFilters = {
+  watched: true,
+  membersOnly: false,
+};
+
+const initialOptions = {
+  videoNumbersAreShown: false,
+};
+
+async function init() {
+  const state = await loadState();
+
+  if (state.extensionIsEnabled === undefined) {
+    state.extensionIsEnabled = initialExtensionIsEnabled;
+  }
+
+  if (!state.filters) {
+    state.filters = initialFilters;
+    void setState(state);
+  }
+
+  if (!state.options) {
+    state.options = initialOptions;
+    void setState(state);
+  }
+}
+
+void init();
 
 export function loadState() {
   return browser.storage.local.get() as Promise<State>;
@@ -28,6 +60,30 @@ export async function isExtensionEnabled() {
 export async function toggleExtensionIsEnabled() {
   return setState({
     extensionIsEnabled: !(await isExtensionEnabled()),
+  });
+}
+
+export async function loadFilters() {
+  return (await loadState()).filters;
+}
+
+export async function toggleFilter(filterName: FilterNames) {
+  const { filters } = await loadState();
+
+  return setState({
+    filters: { ...filters, [filterName]: !filters[filterName] },
+  });
+}
+
+export async function loadOptions() {
+  return (await loadState()).options;
+}
+
+export async function toggleOption(optionName: ViewOptionNames) {
+  const { options } = await loadState();
+
+  return setState({
+    options: { ...options, [optionName]: !options[optionName] },
   });
 }
 
@@ -57,59 +113,77 @@ export async function queryActiveTab() {
   return activeBrowserTab;
 }
 
-export async function sendMessageToContent(
-  activeTabId: number | undefined,
-  payload: MessagePayload,
-) {
+export async function sendMessageToContent(payload: MessageToContentPayload) {
+  const { previousTabId, activeTabId } = payload;
+
   if (typeof activeTabId !== "number") {
     console.error("missing activeTabId");
 
     return;
   }
 
-  await browser.tabs.sendMessage(activeTabId, payload);
+  try {
+    const { previousTabId, ...activeTabPayload } = payload;
+    await browser.tabs.sendMessage(activeTabId, activeTabPayload);
+
+    if (previousTabId !== undefined) {
+      const { activeTabId, ...previousTabPayload } = payload;
+      await browser.tabs.sendMessage(previousTabId, previousTabPayload);
+    }
+  } catch (_error) {
+    console.info(
+      `Content instance with tabId: ${previousTabId} is not listening for message`,
+    );
+  }
 }
 
-export async function update({
-  extensionIsEnabled,
+/*
+ * updates popup icon
+ * sends message from background script to active tab's content script, and optionally to previous tab's content script, on relevant YouTube pages, when user has switched to new tab or url has changed in the same tab
+ */
+export async function updateTabContent({
   browserEvent,
   activeTab,
-}: UpdateStateProperties) {
-  const isEnabled = extensionIsEnabled || (await isExtensionEnabled());
-  const tab = activeTab || (await queryActiveTab());
-  const tabId = tab.id;
-  const tabUrl = tab.url;
+  previousTabId,
+}: UpdateProperties) {
+  const extensionIsEnabled = await isExtensionEnabled();
+  void updateExtensionIcon({ extensionIsEnabled });
 
-  if (!tabId || !tabUrl) {
-    throw new Error(`tabId: ${tabId}. tabUrl: ${tabUrl}`);
+  if (!extensionIsEnabled) return;
+
+  const tab = activeTab || (await queryActiveTab());
+  const activeTabId = tab.id;
+  const activeTabUrl = tab.url;
+
+  if (!activeTabId || !activeTabUrl) {
+    throw new Error(`tabId: ${activeTabId}. tabUrl: ${activeTabUrl}`);
   }
 
-  const currentYouTubePageType = youTube.getActionablePageType(tabUrl);
+  const currentYouTubePageType = youTube.getActionablePageType(activeTabUrl);
 
   if (currentYouTubePageType) {
-    void sendMessageToContent(tabId, {
+    void sendMessageToContent({
       browserEvent,
-      extensionIsEnabled: isEnabled,
-      tabId,
-      currentYouTubePageType: currentYouTubePageType,
+      activeTabId,
+      previousTabId,
     });
   }
-
-  void updateExtensionIcon({ extensionIsEnabled: isEnabled, tabUrl: tabUrl });
 }
 
 export async function updateExtensionIcon({
   extensionIsEnabled,
-  tabUrl,
 }: UpdateIconProperties) {
+  const tab = await queryActiveTab();
+  const tabUrl = tab.url;
+
   const iconPath =
-    extensionIsEnabled && (await extensionShouldRunOnCurrentPage(tabUrl))
+    extensionIsEnabled && (await extensionCanRunOnCurrentPageType(tabUrl))
       ? "media/icons/extension-is-enabled.png"
       : "media/icons/extension-is-disabled.png";
   void browser.browserAction.setIcon({ path: iconPath });
 }
 
-export async function extensionShouldRunOnCurrentPage(activeTabUrl?: string) {
+export async function extensionCanRunOnCurrentPageType(activeTabUrl?: string) {
   const url = activeTabUrl || (await queryActiveTab()).url;
 
   if (!url) {
@@ -123,22 +197,38 @@ export async function extensionShouldRunOnCurrentPage(activeTabUrl?: string) {
 
 export function addBrowserStorageListener(
   eventName: "onChanged",
-  listener: (changes: any) => void,
+  callbackListener: (changes: StateChanges) => void,
 ) {
+  const listener = async (changes: StateChanges, area: string) => {
+    if (area !== "local") {
+      return;
+    }
+
+    callbackListener(changes);
+  };
+
   switch (eventName) {
     case "onChanged":
-      browser.storage.onChanged.addListener(
-        async (changes: StateChanges, area) => {
-          console.info("storage.onChanged, changes:", changes);
-
-          if (area !== "local") {
-            return;
-          }
-
-          listener(changes);
-        },
-      );
+      browser.storage.onChanged.addListener(listener);
       break;
     default:
   }
+}
+
+/*
+ * content script retrieves content-tab id and active-tab id from background script, which has access to `browser.tabs`, and compares them
+ */
+export async function isActiveTab() {
+  const { contentTabId, activeTabId } = await getTabIds();
+
+  return contentTabId !== undefined && contentTabId === activeTabId;
+}
+
+export function getTabIds(): Promise<{
+  contentTabId?: number;
+  activeTabId: number;
+}> {
+  return browser.runtime.sendMessage({
+    action: "getTabIds",
+  });
 }
