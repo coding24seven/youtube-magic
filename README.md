@@ -1,10 +1,10 @@
 # YouTube Magic
 
-A browser extension that filters out watched YouTube videos, keeping your YouTube feeds fresh and uncluttered. This version hides watched videos only, while additional functionality is on the roadmap.
+A browser extension that filters out watched and members-only YouTube videos, keeping your YouTube feeds fresh and uncluttered.
 
 ## Features
 
-- Filters out videos that contain a progress bar, on YouTube.
+- Filters out YouTube videos that contain a progress bar or members-only badge.
 
 ## Installation
 
@@ -12,7 +12,7 @@ A browser extension that filters out watched YouTube videos, keeping your YouTub
 
 ## Permissions
 
-- Access to YouTube channel pages (`https://www.youtube.com/@*`) to detect and filter videos.
+- Access to YouTube pages (`https://www.youtube.com`) to detect and filter videos.
 - No data collection or external requests.
 
 ## System Requirements for development and build
@@ -31,11 +31,11 @@ A browser extension that filters out watched YouTube videos, keeping your YouTub
 
 - to build and package into `artifacts/youtube_magic-<version>.zip`: run: `npm run build` or `./ddbuild` for docker-desktop on Linux
 
-## Build and Package (for extension developers)
+## Manual Build Pipeline (for extension developers)
 
 - Update `version` in `package.json`, `manifest.json`, `CHANGELOG.md`
 - to build for production, and package into `artifacts/youtube_magic-<version>.zip`: run: `npm run build` or `./ddbuild` for docker-desktop on Linux
-- merge develop into main
+- once the extension is live, merge develop into main
 - git tag -a v<version> -m "Release <version>: <Summary of changes> - Published to Firefox Add-ons"
 
 ## Publish
