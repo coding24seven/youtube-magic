@@ -1,10 +1,10 @@
-export function debounce(callback: () => void, waitMs: number) {
+export function debounce(callback: (...args: any[]) => void, waitMs: number) {
   let timeout: NodeJS.Timeout;
 
-  return () => {
+  return (...args: any[]) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
-      callback();
+      callback(...args);
     }, waitMs);
   };
 }
