@@ -294,7 +294,6 @@ export default class Filter {
       if (!(extensionIsEnabled && (await isActiveTab()))) return;
 
       if (extensionIsEnabled.newValue) {
-        this.cleanUp();
         void this.run();
       } else {
         await this.filterLoadedVideos();
