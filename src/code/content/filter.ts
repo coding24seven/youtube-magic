@@ -258,7 +258,7 @@ export default class Filter {
 
       try {
         if (await isExtensionEnabled()) {
-          void this.run();
+          await this.run();
         }
       } catch (e) {
         console.info(
