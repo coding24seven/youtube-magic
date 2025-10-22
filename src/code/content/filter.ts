@@ -1,4 +1,9 @@
-import { BrowserEvents, customEvents, youTubeEvents } from "./events";
+import {
+  BrowserEvents,
+  customEvents,
+  domEvents,
+  youTubeEvents,
+} from "./events";
 import Observer, {
   EmittedNodeEventHandler,
   ObservedElementDetail,
@@ -45,7 +50,7 @@ export default class Filter {
     this.membersOnlyFilterEnabled = membersOnly;
     this.videoNumbersAreShown = videoNumbersAreShown;
 
-    this.addYtNavigateFinishEventListener();
+    this.addPersistentYtNavigateFinishEventListener();
     this.listenForMessageFromBackground();
     this.listenForBrowserStorageChanges();
   }
@@ -79,8 +84,9 @@ export default class Filter {
 
     const contents = await this.element.waitForAndGetAndSetContents();
     const { videoElementTagName } = this.element;
-    this.addContentsObserver(contents, videoElementTagName);
-    this.addChipsListener();
+    this.addNonPersistentContentsObserver(contents, videoElementTagName);
+    this.addNonPersistentChipsListener();
+    this.addNonPersistentResizeEventListener();
 
     this.cleanUpProcedures.push(
       () => {
@@ -99,10 +105,10 @@ export default class Filter {
       },
     );
 
-    await this.filterLoadedVideos();
+    void this.filterLoadedVideos();
   }
 
-  addContentsObserver(
+  addNonPersistentContentsObserver(
     contents: HTMLElement,
     videoElementTagName: string | undefined,
   ) {
@@ -220,7 +226,7 @@ export default class Filter {
     }
   }
 
-  private addChipsListener() {
+  private addNonPersistentChipsListener() {
     const handler = async (event: Event) => {
       const chipHasBeenClicked = this.element.hasChipBeenClicked(event);
 
@@ -244,17 +250,15 @@ export default class Filter {
     });
   }
 
-  /* url changed within a tab, by clicking on link or reloading page */
-  /* There is no straightforward way to determine when new-page videos have fully replaced previous-page videos on SPA (non-page-reload) navigation. erroneously, YouTube dispatches this event before DOM mutations have completed, which means that at this point the contents element may contain stale video elements from previous url, and video count is usually incorrect until the DOM stops mutating, which is not predictable because long pauses may occur between mutations. Mutation Observer addresses this issue. */
-  private addYtNavigateFinishEventListener() {
-    const handler = async (event: Event) => {
-      console.info(youTubeEvents.ytNavigateFinish, "event:", event);
+  private get windowContentChangedHandler() {
+    return async (event: Event) => {
+      console.info("event type:", event.type);
 
-      this.cleanUp();
+      this.cleanUp(); /* must clean up as there was no tab switching (which cleans up previous tab) */
 
       try {
         if (await isExtensionEnabled()) {
-          void this.run();
+          await this.run();
         }
       } catch (e) {
         console.info(
@@ -262,8 +266,25 @@ export default class Filter {
         );
       }
     };
+  }
 
-    window.addEventListener(youTubeEvents.ytNavigateFinish, handler);
+  /* url changed within a tab, by clicking on link or reloading page */
+  /* There is no straightforward way to determine when new-page videos have fully replaced previous-page videos on SPA (non-page-reload) navigation. erroneously, YouTube dispatches this event before DOM mutations have completed, which means that at this point the contents element may contain stale video elements from previous url, and video count is usually incorrect until the DOM stops mutating, which is not predictable because long pauses may occur between mutations. Mutation Observer addresses this issue. */
+  private addPersistentYtNavigateFinishEventListener() {
+    window.addEventListener(
+      youTubeEvents.ytNavigateFinish,
+      this.windowContentChangedHandler,
+    );
+  }
+
+  private addNonPersistentResizeEventListener() {
+    const handler = debounce(this.windowContentChangedHandler, 1000);
+
+    window.addEventListener(domEvents.resize, handler);
+
+    this.cleanUpProcedures.push(() => {
+      window.removeEventListener(domEvents.resize, handler);
+    });
   }
 
   private listenForBrowserStorageChanges() {
@@ -273,7 +294,6 @@ export default class Filter {
       if (!(extensionIsEnabled && (await isActiveTab()))) return;
 
       if (extensionIsEnabled.newValue) {
-        this.cleanUp();
         void this.run();
       } else {
         await this.filterLoadedVideos();
@@ -289,7 +309,7 @@ export default class Filter {
       this.watchedFilterEnabled = filters.newValue.watched;
       this.membersOnlyFilterEnabled = filters.newValue.membersOnly;
 
-      await this.filterLoadedVideos();
+      void this.filterLoadedVideos();
     });
 
     addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
