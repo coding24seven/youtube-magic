@@ -1,6 +1,8 @@
+// @ts-ignore
 export function debounce(callback: (...args: any[]) => void, waitMs: number) {
   let timeout: NodeJS.Timeout;
 
+  // @ts-ignore
   return (...args: any[]) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => {

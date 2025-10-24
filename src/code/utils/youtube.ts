@@ -21,20 +21,20 @@ export default class YouTube {
     [SubscriptionsPage]: [/youtube\.com\/feed\/subscriptions\/?$/],
     [WatchPage]: [/youtube\.com\/watch/],
     [ChannelHomePage]: [
-      /youtube\.com\/@[^\/]+$/ /* youtube.com/@channelname */,
-      /youtube\.com\/c\/[^\/]+$/ /* youtube.com/c/channelname */,
+      /youtube\.com\/@[^/]+$/ /* youtube.com/@channelname */,
+      /youtube\.com\/c\/[^/]+$/ /* youtube.com/c/channelname */,
     ],
     [ChannelFeaturedPage]: [
       /youtube\.com\/@.+\/featured/ /* youtube.com/@channelname/featured */,
-      /youtube\.com\/c\/[^\/]+\/featured/ /* youtube.com/c/channelname/featured */,
+      /youtube\.com\/c\/[^/]+\/featured/ /* youtube.com/c/channelname/featured */,
     ],
     [ChannelVideosPage]: [
       /youtube\.com\/@.+\/videos/ /* youtube.com/@channelname/videos */,
-      /youtube\.com\/c\/[^\/]+\/videos/ /* youtube.com/c/channelname/videos */,
+      /youtube\.com\/c\/[^/]+\/videos/ /* youtube.com/c/channelname/videos */,
     ],
     [ChannelStreamsPage]: [
       /youtube\.com\/@.+\/streams/ /* youtube.com/@channelname/streams */,
-      /youtube\.com\/c\/[^\/]+\/streams/ /* youtube.com/c/channelname/streams */,
+      /youtube\.com\/c\/[^/]+\/streams/ /* youtube.com/c/channelname/streams */,
     ],
   };
 

@@ -57,7 +57,7 @@ export default class Dom {
     element: HTMLElement,
     waitMs: number,
   ) {
-    return new Promise(async (resolve) => {
+    return new Promise((resolve) => {
       const fallbackTimeout = setTimeout(() => {
         console.info('Element is not mutating. Returning...');
         clearTimeout(observerTimeout);

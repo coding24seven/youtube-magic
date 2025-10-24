@@ -185,12 +185,14 @@ export default class Element {
   }
 
   public unNumberVideos() {
-    let numberElementCount = 0;
+    let removedNumberElementCount = 0;
 
     this.visibleVideos.forEach((video) => {
-      this.removeNumberFromVideo(video) && numberElementCount++;
+      if (this.removeNumberFromVideo(video)) {
+        removedNumberElementCount++;
+      }
     });
 
-    return numberElementCount;
+    return removedNumberElementCount;
   }
 }
