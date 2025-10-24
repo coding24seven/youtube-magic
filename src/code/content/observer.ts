@@ -1,4 +1,4 @@
-import { customEvents } from "./events";
+import { customEvents } from './events';
 
 export interface EmittedNodeEventHandler {
   (event: CustomEvent<ObservedElementDetail>): void;
@@ -9,7 +9,7 @@ export interface ObservedElementDetail {
   action: NodeAction;
 }
 
-type NodeAction = "addedNodes" | "removedNodes";
+type NodeAction = 'addedNodes' | 'removedNodes';
 
 export default class Observer {
   mutationObserver: MutationObserver;
@@ -25,7 +25,7 @@ export default class Observer {
   public create() {
     return new MutationObserver((mutationsList) => {
       for (const mutation of mutationsList) {
-        if (mutation.type !== "childList") {
+        if (mutation.type !== 'childList') {
           continue;
         }
 
@@ -65,12 +65,12 @@ export default class Observer {
       childList: true,
       subtree: true,
     });
-    console.info(`Observer activated on element:`, this.observedElement);
+    console.info('Observer activated on element:', this.observedElement);
   }
 
   public deactivate() {
     this.mutationObserver.disconnect();
-    console.info(`Observer deactivated on element:`, this.observedElement);
+    console.info('Observer deactivated on element:', this.observedElement);
   }
 
   private isElement(node: Node): node is HTMLElement {

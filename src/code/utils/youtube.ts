@@ -1,4 +1,4 @@
-import { YouTubePageTypes } from "../content/types";
+import { YouTubePageTypes } from '../content/types';
 
 interface Page {
   lastUrl: string;
@@ -39,7 +39,7 @@ export default class YouTube {
   };
 
   private page: Page = {
-    lastUrl: "",
+    lastUrl: '',
     type: undefined,
   };
 

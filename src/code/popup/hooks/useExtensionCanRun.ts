@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { extensionCanRunOnCurrentPageType } from "../../browser-api";
+import { useEffect, useState } from 'react';
+import { extensionCanRunOnCurrentPageType } from '../../browser-api';
 
 export const useExtensionCanRun = () => {
   const [extensionCanRunOnPageType, setExtensionCanRunOnPageType] =

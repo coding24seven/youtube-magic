@@ -1,12 +1,12 @@
 export enum FilterNames {
-  Watched = "watched",
-  MembersOnly = "membersOnly",
+  Watched = 'watched',
+  MembersOnly = 'membersOnly',
 }
 
 export type Filters = Record<FilterNames, boolean>;
 
 export enum ViewOptionNames {
-  VideoNumbersAreShown = "videoNumbersAreShown",
+  VideoNumbersAreShown = 'videoNumbersAreShown',
 }
 
 export type ViewOptions = Record<ViewOptionNames, boolean>;

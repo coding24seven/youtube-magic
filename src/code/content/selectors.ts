@@ -1,4 +1,4 @@
-import { YouTubePageTypes } from "./types";
+import { YouTubePageTypes } from './types';
 
 const {
   HomePage,
@@ -10,28 +10,28 @@ const {
   ChannelStreamsPage,
 } = YouTubePageTypes;
 
-const contents = "#contents";
+const contents = '#contents';
 
-const watchPageVideo = "yt-lockup-view-model";
-const channelHomePageVideo = "ytd-grid-video-renderer";
+const watchPageVideo = 'yt-lockup-view-model';
+const channelHomePageVideo = 'ytd-grid-video-renderer';
 const otherPagesVideo =
-  "ytd-rich-item-renderer:not([is-post]):not([is-slim-media])";
+  'ytd-rich-item-renderer:not([is-post]):not([is-slim-media])';
 
 const progressBarSegment = '*[class*="ProgressBarSegment" i][style*="width"]';
 const progressId = '#progress[style*="width"]';
-const progressBar = [progressBarSegment, progressId].join(", ");
+const progressBar = [progressBarSegment, progressId].join(', ');
 
-const membersOnlyBadgeSupportedRenderer = "p.ytd-badge-supported-renderer";
-const commerceBadge = "badge-shape.yt-badge-shape.yt-badge-shape--commerce";
+const membersOnlyBadgeSupportedRenderer = 'p.ytd-badge-supported-renderer';
+const commerceBadge = 'badge-shape.yt-badge-shape.yt-badge-shape--commerce';
 const membersOnlyBadge = [
   membersOnlyBadgeSupportedRenderer,
   commerceBadge,
-].join(", ");
+].join(', ');
 
-const chipsContainer = "iron-selector#chips";
+const chipsContainer = 'iron-selector#chips';
 
-const numberedVideoClass = "numbered-video";
-const videoNumberClass = "video-number";
+const numberedVideoClass = 'numbered-video';
+const videoNumberClass = 'video-number';
 
 export const selectors = {
   numberedVideoClass,

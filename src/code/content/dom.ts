@@ -1,17 +1,17 @@
-import Observer, { EmittedNodeEventHandler } from "./observer";
-import { customEvents } from "./events";
+import Observer, { EmittedNodeEventHandler } from './observer';
+import { customEvents } from './events';
 
 export default class Dom {
   public static setVisibility(element: HTMLElement, hide: boolean) {
     if (hide) {
-      element.style.display = "none";
+      element.style.display = 'none';
     } else {
-      element.style.display = "";
+      element.style.display = '';
     }
   }
 
   public static isHidden(element: HTMLElement) {
-    return window.getComputedStyle(element).display === "none";
+    return window.getComputedStyle(element).display === 'none';
   }
 
   public static isVisibleOnPage(element: HTMLElement) {
@@ -59,7 +59,7 @@ export default class Dom {
   ) {
     return new Promise(async (resolve) => {
       const fallbackTimeout = setTimeout(() => {
-        console.info("Element is not mutating. Returning...");
+        console.info('Element is not mutating. Returning...');
         clearTimeout(observerTimeout);
         observer.deactivate();
         eventBus.removeEventListener(...args);

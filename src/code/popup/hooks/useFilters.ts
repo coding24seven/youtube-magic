@@ -1,6 +1,6 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { loadFilters, toggleFilter } from "../../browser-api";
-import { FilterNames } from "../../types";
+import { ChangeEvent, useEffect, useState } from 'react';
+import { loadFilters, toggleFilter } from '../../browser-api';
+import { FilterNames } from '../../types';
 
 const initialFiltersSelectState: Record<FilterNames, boolean> = {
   [FilterNames.Watched]: false,
