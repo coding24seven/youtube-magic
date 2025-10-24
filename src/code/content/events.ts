@@ -5,6 +5,10 @@ export enum BrowserEvents {
   StorageOnChanged = "browser.storage.onChanged",
 }
 
+export const domEvents = {
+  resize: "resize",
+};
+
 export const youTubeEvents = {
   ytNavigateFinish: "yt-navigate-finish",
   ytPageDataUpdated: "yt-page-data-updated",
