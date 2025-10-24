@@ -35,6 +35,7 @@ A browser extension that filters out watched and members-only YouTube videos, ke
 
 - Create `release/v<version>` off `develop` branch
 - Update `version` in `package.json`, `manifest.json`, `CHANGELOG.md`
+- Run `npm install` to update the version in `package-lock.json`
 - To build for production, and package into `artifacts/youtube_magic-<version>.zip`: run: `npm run build` or `./ddbuild` for docker-desktop on Linux
 - Submit zip file from `artifacts/` to https://addons.mozilla.org
 - Once the extension is live, merge `release/v<version>` into `develop` and `main`
