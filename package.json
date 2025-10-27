@@ -6,12 +6,16 @@
   "scripts": {
     "start": "npm run watch",
     "watch": "NODE_ENV=development rollup -c -w",
-    "build": "NODE_ENV=production rollup -c && npm run lint && npm run package",
+    "build": "NODE_ENV=production rollup -c && npm run lint-build && npm run package",
     "prewatch": "npm run clean-watch && node utils/watch-copy-modified-files.js &",
     "prebuild": "npm run clean-build",
     "clean-watch": "rm -rf watch-output/*",
     "clean-build": "rm -rf build-output/*",
-    "lint": "web-ext lint",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "lint-build": "web-ext lint",
     "package": "web-ext build",
     "zip-source": "git archive --format=zip HEAD -o source-code.zip",
     "test": "echo \"Error: no test specified\" && exit 1"
