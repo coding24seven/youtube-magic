@@ -25,6 +25,7 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.38.0",
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",
@@ -32,6 +33,9 @@
     "@types/firefox-webext-browser": "^120.0.4",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "eslint": "^9.38.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.4.0",
     "prettier": "^3.6.2",
     "rollup": "^4.46.2",
     "rollup-plugin-copy": "^3.5.0",
@@ -39,7 +43,11 @@
     "rollup-plugin-typescript2": "^0.36.0",
     "sass": "^1.93.2",
     "typescript": "^5.9.2",
-    "web-ext": "^8.10.0"
+    "typescript-eslint": "^8.46.2",
+    "web-ext": "^9.1.0"
+  },
+  "engines": {
+    "node": ">=25.0.0"
   },
   "keywords": [],
   "author": "",
