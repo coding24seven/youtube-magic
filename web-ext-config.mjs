@@ -1,6 +1,6 @@
 export default {
-  sourceDir: "build-output",
-  artifactsDir: "artifacts",
+  sourceDir: 'build-output',
+  artifactsDir: 'artifacts',
   build: {
     overwriteDest: true,
   },
