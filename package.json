@@ -52,7 +52,7 @@
     "web-ext": "^9.1.0"
   },
   "engines": {
-    "node": ">=25.0.0"
+    "node": ">=22.11.0"
   },
   "keywords": [],
   "author": "",
