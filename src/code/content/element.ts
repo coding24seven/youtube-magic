@@ -27,6 +27,8 @@ export default class Element {
     return this.youTubePageType;
   }
 
+
+
   public get newContents() {
     /* may include invisible elements */
     const contentsElements = Array.from(
