@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.mjs",
+    "**/*.cjs"
+  ] /* `include` overrides its `tsconfig.json` counterpart. it must include all files processed by eslint */,
+  "compilerOptions": {
+    "checkJs": true /* allows eslint to check .js files */
+  }
+}
