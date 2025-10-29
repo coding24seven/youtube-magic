@@ -29,6 +29,7 @@ export default class Element {
 
 
 
+
   public get newContents() {
     /* may include invisible elements */
     const contentsElements = Array.from(
