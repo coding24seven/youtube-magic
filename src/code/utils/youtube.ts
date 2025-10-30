@@ -15,6 +15,8 @@ const {
   ChannelStreamsPage,
 } = YouTubePageTypes;
 
+
+
 export default class YouTube {
   private static pageTypesRegex: Record<YouTubePageTypes, RegExp[]> = {
     [HomePage]: [/youtube\.com\/?$/],
