@@ -26,7 +26,7 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-  code-scan:
+  code-ql-scan:
     runs-on: ubuntu-latest
     permissions:
       security-events: write

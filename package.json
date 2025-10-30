@@ -55,7 +55,7 @@
     "node": ">=22.11.0"
   },
   "keywords": [],
-  "author": "",
+  "author": "Arek",
   "license": "MIT",
   "description": "hides unwanted videos on youtube"
 }
