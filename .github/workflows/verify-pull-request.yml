@@ -9,7 +9,7 @@ on:
       - develop
 
 jobs:
-  lint:
+  lint-and-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -25,6 +25,9 @@ jobs:
 
       - name: Run ESLint
         run: npm run lint
+
+      - name: Build
+        run: npm run build
 
   code-ql-scan:
     runs-on: ubuntu-latest
