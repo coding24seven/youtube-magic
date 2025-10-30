@@ -12,12 +12,15 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Lint, Test, Build
         uses: ./.github/actions/lint-test-build
         with:
           node-version: '22'
 
-  code-ql-scan:
+  security-scan:
     runs-on: ubuntu-latest
     permissions:
       security-events: write
