@@ -1,5 +1,5 @@
 name: 'Lint, Test, Build'
-description: 'Run linting, tests, and build for TypeScript project'
+description: 'Run linting, tests, and build'
 inputs:
   node-version:
     description: 'Node.js version to use'
