@@ -12,7 +12,8 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/lint-test-build
+      - name: Lint, Test, Build
+        uses: ./.github/actions/lint-test-build
         with:
           node-version: '22'
 
