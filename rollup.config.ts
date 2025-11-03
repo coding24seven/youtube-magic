@@ -1,10 +1,10 @@
 import typescript from 'rollup-plugin-typescript2';
 import copy from 'rollup-plugin-copy';
-import getTerser from './rollup-plugins/getTerser.js';
+import getTerser from './rollup-plugins/getTerser';
 import replace from '@rollup/plugin-replace';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import { getSass } from './rollup-plugins/getSass.js';
+import getSass from './rollup-plugins/getSass';
 import path from 'path';
 
 const isProduction = process.env.NODE_ENV === 'production';

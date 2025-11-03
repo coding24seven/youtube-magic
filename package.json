@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "npm run watch",
-    "watch": "NODE_ENV=development rollup -c -w",
-    "build": "NODE_ENV=production rollup -c && npm run lint-build && npm run package",
+    "watch": "NODE_ENV=development rollup -c -w --configPlugin @rollup/plugin-typescript",
+    "build": "NODE_ENV=production rollup -c --configPlugin @rollup/plugin-typescript && npm run lint-build && npm run package",
     "prewatch": "npm run clean-watch && node utils/watch-copy-modified-files.js &",
     "prebuild": "npm run clean-build",
     "clean-watch": "rm -rf watch-output/*",
@@ -31,6 +31,7 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@types/firefox-webext-browser": "^120.0.4",
     "@types/node": "^24.9.1",
     "@types/react": "^19.2.0",
