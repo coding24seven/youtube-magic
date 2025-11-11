@@ -136,9 +136,7 @@ export default class Element {
   }
 
   public hasMembersOnlyBadge(element: HTMLElement) {
-    const badge = Dom.find(element, selectors.membersOnlyBadge);
-
-    return !!(badge && badge.textContent);
+    return Dom.anySelectedElementHasText(element, selectors.membersOnlyBadge);
   }
 
   public hasChipBeenClicked(event: Event) {

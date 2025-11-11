@@ -22,10 +22,12 @@ const progressId = '#progress[style*="width"]';
 const progressBar = [progressBarSegment, progressId].join(', ');
 
 const membersOnlyBadgeSupportedRenderer = 'p.ytd-badge-supported-renderer';
+const membersOnlyBadgeSupportedRendererElement = 'ytd-badge-supported-renderer';
 const commerceBadge = 'badge-shape.yt-badge-shape.yt-badge-shape--commerce';
 const membersOnlyBadge = [
   membersOnlyBadgeSupportedRenderer,
   commerceBadge,
+  membersOnlyBadgeSupportedRendererElement,
 ].join(', ');
 
 const chipsContainer = 'iron-selector#chips';

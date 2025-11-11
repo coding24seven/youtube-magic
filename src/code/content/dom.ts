@@ -14,6 +14,9 @@ export default class Dom {
     return window.getComputedStyle(element).display === 'none';
   }
 
+  /**
+   * checks if an `element` is visible on the page by checking if it or any of its parents are hidden
+   */
   public static isVisibleOnPage(element: HTMLElement) {
     let parent: HTMLElement | null = element;
 
@@ -28,10 +31,9 @@ export default class Dom {
     return true;
   }
 
-  public static find(
-    element: HTMLElement,
-    selector: string,
-  ): HTMLElement | null {
+  /**
+   * returns HTML element for a given `selector`, be it the matching parent (`element` parameter) or one of its children, or null
+   */ public static find(element: HTMLElement, selector: string) {
     if (element.matches(selector)) {
       return element;
     }
@@ -39,6 +41,43 @@ export default class Dom {
     return element.querySelector(selector);
   }
 
+  /**
+   * returns all HTML elements for a given selector (`selector` parameter), including the matching parent (`element` parameter) and its children
+   */
+  public static findAll(element: HTMLElement, selector: string) {
+    const elements: HTMLElement[] = [];
+
+    if (element.matches(selector)) {
+      elements.push(element);
+    }
+
+    const children: NodeListOf<HTMLElement> =
+      element.querySelectorAll(selector);
+
+    elements.push(...children);
+
+    return elements;
+  }
+
+  /**
+   * checks if any elements returned by the `findAll` method have text content
+   */
+  public static anySelectedElementHasText(
+    element: HTMLElement,
+    selector: string,
+  ) {
+    const elements = this.findAll(element, selector);
+
+    if (elements) {
+      return elements.some((element) => element.textContent);
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * returns the descendant's ancestor HTML element selected by `ancestorSelector`, if found, or null
+   */
   public static getAncestor(ancestorSelector: string, descendant: HTMLElement) {
     let parent: HTMLElement | null = descendant;
 
