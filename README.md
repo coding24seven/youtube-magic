@@ -33,6 +33,7 @@ A browser extension that filters out watched and members-only YouTube videos, ke
 
 ## Manual Build Pipeline (for extension developers)
 
+- Create a pull request to merge your `feature` branch into `develop` branch
 - Create `release/v<version>` off `develop` branch
 - Update `version` in `package.json`, `manifest.json`, `CHANGELOG.md`
 - Run `npm install` to update the version in `package-lock.json`
