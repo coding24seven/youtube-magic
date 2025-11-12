@@ -1,0 +1,30 @@
+name: 'Lint, Test, Build'
+description: 'Run linting, tests, and build'
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '22'
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
+
+    - name: Lint
+      shell: bash
+      run: npm run lint
+
+    - name: Test
+      shell: bash
+      run: npm run test
+
+    - name: Build
+      shell: bash
+      run: npm run build

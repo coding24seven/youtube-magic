@@ -1,6 +1,6 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { loadOptions, toggleOption } from "../../browser-api";
-import { ViewOptionNames } from "../../types";
+import { ChangeEvent, useEffect, useState } from 'react';
+import { loadOptions, toggleOption } from '../../browser-api';
+import { ViewOptionNames } from '../../types';
 
 const initialOptionsSelectState: Record<ViewOptionNames, boolean> = {
   [ViewOptionNames.VideoNumbersAreShown]: false,

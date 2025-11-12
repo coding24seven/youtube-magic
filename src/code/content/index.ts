@@ -1,7 +1,7 @@
-import { compensateForFirefoxBugs } from "./utils";
-import Filter from "./filter";
-import "./styles.scss";
-import { loadFilters, loadOptions } from "../browser-api";
+import { compensateForFirefoxBugs } from './utils';
+import Filter from './filter';
+import './styles.scss';
+import { loadFilters, loadOptions } from '../browser-api';
 
 compensateForFirefoxBugs();
 

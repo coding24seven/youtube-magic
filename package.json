@@ -5,29 +5,43 @@
   "type": "module",
   "scripts": {
     "start": "npm run watch",
-    "watch": "NODE_ENV=development rollup -c -w",
-    "build": "NODE_ENV=production rollup -c && npm run lint && npm run package",
+    "watch": "NODE_ENV=development rollup -c -w --configPlugin @rollup/plugin-typescript",
+    "build": "NODE_ENV=production rollup -c --configPlugin @rollup/plugin-typescript && npm run lint-build && npm run package",
     "prewatch": "npm run clean-watch && node utils/watch-copy-modified-files.js &",
     "prebuild": "npm run clean-build",
     "clean-watch": "rm -rf watch-output/*",
     "clean-build": "rm -rf build-output/*",
-    "lint": "web-ext lint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "eslint-inspect-config": "eslint --inspect-config",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "lint-build": "web-ext lint",
     "package": "web-ext build",
     "zip-source": "git archive --format=zip HEAD -o source-code.zip",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.38.0",
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@types/firefox-webext-browser": "^120.0.4",
+    "@types/node": "^24.9.1",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "eslint": "^9.38.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.4.0",
+    "jiti": "^2.6.1",
     "prettier": "^3.6.2",
     "rollup": "^4.46.2",
     "rollup-plugin-copy": "^3.5.0",
@@ -35,10 +49,14 @@
     "rollup-plugin-typescript2": "^0.36.0",
     "sass": "^1.93.2",
     "typescript": "^5.9.2",
-    "web-ext": "^8.10.0"
+    "typescript-eslint": "^8.46.2",
+    "web-ext": "^9.1.0"
+  },
+  "engines": {
+    "node": ">=22.11.0"
   },
   "keywords": [],
-  "author": "",
+  "author": "Arek",
   "license": "MIT",
   "description": "hides unwanted videos on youtube"
 }

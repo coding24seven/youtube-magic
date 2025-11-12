@@ -1,6 +1,6 @@
 import Tab = browser.tabs.Tab;
-import { BrowserEvents } from "../content/events";
-import { Filters, Options } from "../types";
+import { BrowserEvents } from '../content/events';
+import { Filters, Options } from '../types';
 
 export interface State {
   extensionIsEnabled: boolean | undefined;

@@ -1,23 +1,23 @@
-import typescript from "rollup-plugin-typescript2";
-import copy from "rollup-plugin-copy";
-import getTerser from "./rollup-plugins/getTerser.js";
-import replace from "@rollup/plugin-replace";
-import nodeResolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import { getSass } from "./rollup-plugins/getSass.js";
-import path from "path";
+import typescript from 'rollup-plugin-typescript2';
+import copy from 'rollup-plugin-copy';
+import getTerser from './rollup-plugins/getTerser';
+import replace from '@rollup/plugin-replace';
+import nodeResolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import getSass from './rollup-plugins/getSass';
+import path from 'path';
 
-const isProduction = process.env.NODE_ENV === "production";
-const outputDir = isProduction ? "build-output" : "watch-output";
+const isProduction = process.env.NODE_ENV === 'production';
+const outputDir = isProduction ? 'build-output' : 'watch-output';
 const terser = getTerser();
 
 export default [
   {
-    input: "src/code/content/index.ts",
+    input: 'src/code/content/index.ts',
     output: {
       dir: outputDir,
-      format: "cjs",
-      entryFileNames: "code/content/[name].js",
+      format: 'cjs',
+      entryFileNames: 'code/content/[name].js',
       sourcemap: !isProduction,
     },
     watch: {
@@ -26,27 +26,27 @@ export default [
     plugins: [
       /* copies all files from src to output, but only once on `npm run watch` */
       copy({
-        targets: [{ src: ["src/**/*", "!**/*/code"], dest: outputDir }],
+        targets: [{ src: ['src/**/*', '!**/*/code'], dest: outputDir }],
         flatten: false,
       }),
       typescript({ abortOnError: isProduction }),
       replace({
-        "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
         preventAssignment: true,
       }),
       isProduction && terser,
       getSass({
-        output: path.join(outputDir, "code", "content", "styles.css"),
+        output: path.join(outputDir, 'code', 'content', 'styles.css'),
         isProduction,
       }),
     ],
   },
   {
-    input: "src/code/popup/index.ts",
+    input: 'src/code/popup/index.ts',
     output: {
       dir: outputDir,
-      format: "iife",
-      entryFileNames: "code/popup/[name].js",
+      format: 'iife',
+      entryFileNames: 'code/popup/[name].js',
       sourcemap: !isProduction,
     },
     plugins: [
@@ -54,11 +54,11 @@ export default [
       replace({
         preventAssignment: true,
         values: {
-          "process.env.NODE_ENV": JSON.stringify(
-            isProduction ? "production" : "development",
+          'process.env.NODE_ENV': JSON.stringify(
+            isProduction ? 'production' : 'development',
           ),
-          "typeof process": '"undefined"',
-          process: "undefined",
+          'typeof process': '"undefined"',
+          process: 'undefined',
         },
       }),
       nodeResolve({
@@ -68,17 +68,17 @@ export default [
       typescript({ abortOnError: isProduction }),
       isProduction && terser,
       getSass({
-        output: path.join(outputDir, "code", "popup", "styles.css"),
+        output: path.join(outputDir, 'code', 'popup', 'styles.css'),
         isProduction,
       }),
     ],
   },
   {
-    input: "src/code/background/index.ts",
+    input: 'src/code/background/index.ts',
     output: {
       dir: outputDir,
-      format: "cjs",
-      entryFileNames: "code/background/[name].js",
+      format: 'cjs',
+      entryFileNames: 'code/background/[name].js',
       sourcemap: !isProduction,
     },
     plugins: [

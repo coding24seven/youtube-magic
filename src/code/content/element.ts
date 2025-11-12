@@ -1,12 +1,12 @@
-import Observer, { EmittedNodeEventHandler } from "./observer";
-import { customEvents } from "./events";
-import { YouTubePageTypes } from "./types";
-import { selectors } from "./selectors";
-import Dom from "./dom";
+import Observer, { EmittedNodeEventHandler } from './observer';
+import { customEvents } from './events';
+import { YouTubePageTypes } from './types';
+import { selectors } from './selectors';
+import Dom from './dom';
 
 export default class Element {
   private static videoNumberTemplate: HTMLElement = (() => {
-    const template = document.createElement("span");
+    const template = document.createElement('span');
     template.classList.add(selectors.videoNumberClass);
 
     return template;
@@ -21,7 +21,7 @@ export default class Element {
 
   public get pageType() {
     if (!this.youTubePageType) {
-      throw new Error(`youTubePageType must be a YouTubePageType`);
+      throw new Error('youTubePageType must be a YouTubePageType');
     }
 
     return this.youTubePageType;
@@ -59,7 +59,7 @@ export default class Element {
 
   public get videos() {
     if (!this.contents) {
-      console.info(`contents element absent`);
+      console.info('contents element absent');
 
       return [];
     }
@@ -94,14 +94,14 @@ export default class Element {
       this.contents = this.newContents;
 
       if (this.contents) {
-        console.info("#contents found, already in the DOM:", this.contents);
+        console.info('#contents found, already in the DOM:', this.contents);
 
         resolve(this.contents);
 
         return;
       }
 
-      console.info("#contents not in the DOM yet. Waiting for it to load...");
+      console.info('#contents not in the DOM yet. Waiting for it to load...');
 
       const handler: EmittedNodeEventHandler = (_event) => {
         this.contents = this.newContents;
@@ -110,7 +110,7 @@ export default class Element {
           return;
         }
 
-        console.info("#contents has just loaded:", this.contents);
+        console.info('#contents has just loaded:', this.contents);
 
         observer.deactivate();
         eventBus.removeEventListener(...args);
@@ -136,9 +136,7 @@ export default class Element {
   }
 
   public hasMembersOnlyBadge(element: HTMLElement) {
-    const badge = Dom.find(element, selectors.membersOnlyBadge);
-
-    return !!(badge && badge.textContent);
+    return Dom.anySelectedElementHasText(element, selectors.membersOnlyBadge);
   }
 
   public hasChipBeenClicked(event: Event) {
@@ -146,8 +144,8 @@ export default class Element {
 
     return ancestorNodes.some(
       (node) =>
-        "matches" in node &&
-        typeof node.matches === "function" &&
+        'matches' in node &&
+        typeof node.matches === 'function' &&
         node.matches(selectors.chips),
     );
   }
@@ -185,12 +183,14 @@ export default class Element {
   }
 
   public unNumberVideos() {
-    let numberElementCount = 0;
+    let removedNumberElementCount = 0;
 
     this.visibleVideos.forEach((video) => {
-      this.removeNumberFromVideo(video) && numberElementCount++;
+      if (this.removeNumberFromVideo(video)) {
+        removedNumberElementCount++;
+      }
     });
 
-    return numberElementCount;
+    return removedNumberElementCount;
   }
 }

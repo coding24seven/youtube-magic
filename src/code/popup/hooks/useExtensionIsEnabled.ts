@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   isExtensionEnabled,
   toggleExtensionIsEnabled,
-} from "../../browser-api";
+} from '../../browser-api';
 
 export const useExtensionIsEnabled = () => {
   const [extensionIsEnabled, setExtensionIsEnabled] = useState(true);

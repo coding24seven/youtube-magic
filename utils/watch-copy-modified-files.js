@@ -1,20 +1,20 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 watchCopyModifiedFiles();
 
 function watchCopyModifiedFiles() {
   const fileTypes = /.*(?<!\.tsx?|\.scss|~)$/; // match file names that do not end with `.ts(x)`, `.scss`, `~` (temporary files created by IDE editor)
-  const outputDir = "watch-output";
+  const outputDir = 'watch-output';
   const debounceMap = new Map(); // Store timeouts for debouncing
   const DEBOUNCE_MS = 100; // Wait 100ms to group events
 
   fs.mkdirSync(outputDir, { recursive: true });
 
-  fs.watch("src", { recursive: true }, (eventType, filePath) => {
+  fs.watch('src', { recursive: true }, (eventType, filePath) => {
     if (!filePath?.match(fileTypes)) {
       console.info(
-        `watch-copy-modified-files: ignored: ${filePath || "unknown file"})`,
+        `watch-copy-modified-files: ignored: ${filePath || 'unknown file'})`,
       );
 
       return;
@@ -28,9 +28,9 @@ function watchCopyModifiedFiles() {
     debounceMap.set(
       filePath,
       setTimeout(() => {
-        console.info(`Event: ${eventType}, File: ${filePath || "unknown"}`);
+        console.info(`Event: ${eventType}, File: ${filePath || 'unknown'}`);
 
-        const srcPath = path.join("src", filePath);
+        const srcPath = path.join('src', filePath);
         const destPath = path.join(outputDir, filePath);
 
         try {
@@ -55,6 +55,6 @@ function watchCopyModifiedFiles() {
   });
 
   console.info(
-    "watch-copy-modified-files: Watching for non-TypeScript, non-scss changes in src directory...",
+    'watch-copy-modified-files: Watching for non-TypeScript, non-scss changes in src directory...',
   );
 }

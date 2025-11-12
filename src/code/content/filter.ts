@@ -3,13 +3,13 @@ import {
   customEvents,
   domEvents,
   youTubeEvents,
-} from "./events";
+} from './events';
 import Observer, {
   EmittedNodeEventHandler,
   ObservedElementDetail,
-} from "./observer";
-import Element from "./element";
-import { MessageToContentPayload, StateChanges } from "../browser-api/types";
+} from './observer';
+import Element from './element';
+import { MessageToContentPayload, StateChanges } from '../browser-api/types';
 import {
   addBrowserStorageListener,
   getTabIds,
@@ -17,12 +17,12 @@ import {
   isExtensionEnabled,
   updateHiddenVideoCount,
   updateVideoCount,
-} from "../browser-api";
-import { debounce } from "../utils";
-import { selectors } from "./selectors";
-import YouTube from "../utils/youtube";
-import Dom from "./dom";
-import { Filters, Options } from "../types";
+} from '../browser-api';
+import { debounce } from '../utils';
+import { selectors } from './selectors';
+import YouTube from '../utils/youtube';
+import Dom from './dom';
+import { Filters, Options } from '../types';
 
 export default class Filter {
   watchedFilterEnabled = true;
@@ -59,7 +59,7 @@ export default class Filter {
     const pageType = this.youTube.getActionablePageType(window.location.href);
 
     if (!pageType) {
-      throw new Error("YouTubePageType not found.");
+      throw new Error('YouTubePageType not found.');
     }
 
     return pageType;
@@ -71,10 +71,10 @@ export default class Filter {
     });
 
     if (this.cleanUpProcedures.length) {
-      console.info("Clean up done");
+      console.info('Clean up done');
       this.cleanUpProcedures = [];
     } else {
-      console.info(`Nothing to clean up`);
+      console.info('Nothing to clean up');
     }
   }
 
@@ -152,7 +152,7 @@ export default class Filter {
     const triggeringElement = element;
 
     switch (action) {
-      case "addedNodes":
+      case 'addedNodes':
         const videoElement = Dom.getAncestor(
           videoElementTagName,
           triggeringElement,
@@ -168,7 +168,7 @@ export default class Filter {
 
         this.hideVideo(videoElement);
         break;
-      case "removedNodes":
+      case 'removedNodes':
         const triggeringElementIsVideo = triggeringElement.matches(
           selectors.video[this.youTubePageType],
         );
@@ -240,7 +240,7 @@ export default class Filter {
     };
 
     const args: [string, EventListener, AddEventListenerOptions] = [
-      "click",
+      'click',
       handler,
       { capture: true } /* bubble has event propagation stopped */,
     ];
@@ -252,7 +252,7 @@ export default class Filter {
 
   private get windowContentChangedHandler() {
     return async (event: Event) => {
-      console.info("event type:", event.type);
+      console.info('event type:', event.type);
 
       this.cleanUp(); /* must clean up as there was no tab switching (which cleans up previous tab) */
 
@@ -262,7 +262,7 @@ export default class Filter {
         }
       } catch (e) {
         console.info(
-          `Page type missing initially means extension should not run on this page`,
+          'Page type missing initially means extension should not run on this page',
         );
       }
     };
@@ -288,7 +288,7 @@ export default class Filter {
   }
 
   private listenForBrowserStorageChanges() {
-    addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
+    addBrowserStorageListener('onChanged', async (changes: StateChanges) => {
       const { extensionIsEnabled } = changes;
 
       if (!(extensionIsEnabled && (await isActiveTab()))) return;
@@ -301,7 +301,7 @@ export default class Filter {
       }
     });
 
-    addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
+    addBrowserStorageListener('onChanged', async (changes: StateChanges) => {
       const { filters } = changes;
 
       if (!(filters && (await isActiveTab()))) return;
@@ -312,7 +312,7 @@ export default class Filter {
       void this.filterLoadedVideos();
     });
 
-    addBrowserStorageListener("onChanged", async (changes: StateChanges) => {
+    addBrowserStorageListener('onChanged', async (changes: StateChanges) => {
       const { options } = changes;
 
       if (!(options && (await isActiveTab()))) return;

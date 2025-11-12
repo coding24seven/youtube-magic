@@ -1,9 +1,9 @@
-import terser from "@rollup/plugin-terser";
+import terser from '@rollup/plugin-terser';
 
 export default function getTerser() {
   return terser({
     compress: {
-      defaults: true, // Enable all default compressions
+      defaults: true,
       drop_console: true,
       drop_debugger: true,
     },

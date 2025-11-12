@@ -1,6 +1,6 @@
-import { ChangeEvent } from "react";
-import SelectItem from "./SelectItem";
-import { SelectItemConfig } from "./App";
+import { ChangeEvent } from 'react';
+import SelectItem from './SelectItem';
+import { SelectItemConfig } from './App';
 
 interface Props {
   heading: string;

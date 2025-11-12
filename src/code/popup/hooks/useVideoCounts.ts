@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   addBrowserStorageListener,
   loadVideoCount,
   loadHiddenVideoCount,
-} from "../../browser-api";
-import { StateChanges } from "../../browser-api/types";
+} from '../../browser-api';
+import { StateChanges } from '../../browser-api/types';
 
 export const useVideoCounts = () => {
   const [videoCount, setVideoCount] = useState(0);
@@ -28,7 +28,7 @@ export const useVideoCounts = () => {
       }
     };
 
-    addBrowserStorageListener("onChanged", listener);
+    addBrowserStorageListener('onChanged', listener);
 
     return () => {
       /* no need to remove listener as `browser.storage.onChanged` is global to the extension and does not leak memory across popup instances since a popup reloads fresh each time you open it. */

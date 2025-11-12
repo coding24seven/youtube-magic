@@ -7,9 +7,9 @@ import {
   StateChanges,
   UpdateIconProperties,
   UpdateProperties,
-} from "./types";
-import YouTube from "../utils/youtube";
-import { FilterNames, ViewOptionNames } from "../types";
+} from './types';
+import YouTube from '../utils/youtube';
+import { FilterNames, ViewOptionNames } from '../types';
 import Tab = browser.tabs.Tab;
 
 const youTube = new YouTube();
@@ -116,8 +116,8 @@ export async function queryActiveTab() {
 export async function sendMessageToContent(payload: MessageToContentPayload) {
   const { previousTabId, activeTabId } = payload;
 
-  if (typeof activeTabId !== "number") {
-    console.error("missing activeTabId");
+  if (typeof activeTabId !== 'number') {
+    console.error('missing activeTabId');
 
     return;
   }
@@ -178,8 +178,8 @@ export async function updateExtensionIcon({
 
   const iconPath =
     extensionIsEnabled && (await extensionCanRunOnCurrentPageType(tabUrl))
-      ? "media/icons/extension-is-enabled.png"
-      : "media/icons/extension-is-disabled.png";
+      ? 'media/icons/extension-is-enabled.png'
+      : 'media/icons/extension-is-disabled.png';
   void browser.browserAction.setIcon({ path: iconPath });
 }
 
@@ -187,7 +187,7 @@ export async function extensionCanRunOnCurrentPageType(activeTabUrl?: string) {
   const url = activeTabUrl || (await queryActiveTab()).url;
 
   if (!url) {
-    console.error("missing url for active tab");
+    console.error('missing url for active tab');
 
     return false;
   }
@@ -196,11 +196,11 @@ export async function extensionCanRunOnCurrentPageType(activeTabUrl?: string) {
 }
 
 export function addBrowserStorageListener(
-  eventName: "onChanged",
+  eventName: 'onChanged',
   callbackListener: (changes: StateChanges) => void,
 ) {
   const listener = async (changes: StateChanges, area: string) => {
-    if (area !== "local") {
+    if (area !== 'local') {
       return;
     }
 
@@ -208,7 +208,7 @@ export function addBrowserStorageListener(
   };
 
   switch (eventName) {
-    case "onChanged":
+    case 'onChanged':
       browser.storage.onChanged.addListener(listener);
       break;
     default:
@@ -229,6 +229,6 @@ export function getTabIds(): Promise<{
   activeTabId: number;
 }> {
   return browser.runtime.sendMessage({
-    action: "getTabIds",
+    action: 'getTabIds',
   });
 }
