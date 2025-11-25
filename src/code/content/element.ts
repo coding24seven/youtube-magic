@@ -27,6 +27,9 @@ export default class Element {
     return this.youTubePageType;
   }
 
+  /**
+   * returns the outermost `contents` element that is visible on the page
+   */
   public get newContents() {
     /* may include invisible elements */
     const contentsElements = Array.from(
