@@ -68,11 +68,7 @@ export default class Dom {
   ) {
     const elements = this.findAll(element, selector);
 
-    if (elements) {
-      return elements.some((element) => element.textContent);
-    } else {
-      return false;
-    }
+    return elements.some((element) => element.textContent);
   }
 
   /**
