@@ -182,7 +182,7 @@ export default class Filter {
   }
 
   /**
-   * @param element - can be a video element or an element inside a video. The element and its children are checked recursively for the presence of elements that indicate the video should get hidden, based on the enabled filters
+   * @param element - can be a video element, or an element inside a video if detected by Mutation Observer. The element and its children are checked recursively for the presence of elements that indicate the video should get hidden, based on the enabled filters
    */
   private shouldHideVideo(element: HTMLElement) {
     if (this.watchedFilterEnabled && this.element.hasProgressBar(element)) {

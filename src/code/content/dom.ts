@@ -44,7 +44,7 @@ export default class Dom {
   /**
    * returns all HTML elements for a given selector (`selector` parameter), including the matching parent (`element` parameter) and its children
    */
-  public static findAll(element: HTMLElement, selector: string) {
+  public static _findAll(element: HTMLElement, selector: string) {
     const elements: HTMLElement[] = [];
 
     if (element.matches(selector)) {
@@ -57,18 +57,6 @@ export default class Dom {
     elements.push(...children);
 
     return elements;
-  }
-
-  /**
-   * checks if any elements returned by the `findAll` method have text content
-   */
-  public static anySelectedElementHasText(
-    element: HTMLElement,
-    selector: string,
-  ) {
-    const elements = this.findAll(element, selector);
-
-    return elements.some((element) => element.textContent);
   }
 
   /**
