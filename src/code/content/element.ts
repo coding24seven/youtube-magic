@@ -27,6 +27,9 @@ export default class Element {
     return this.youTubePageType;
   }
 
+  /**
+   * returns the outermost `contents` element that is visible on the page
+   */
   public get newContents() {
     /* may include invisible elements */
     const contentsElements = Array.from(
@@ -89,6 +92,10 @@ export default class Element {
     return this.visibleVideos.length;
   }
 
+  public isVideo(element: HTMLElement) {
+    return element.matches(selectors.video[this.pageType]);
+  }
+
   public waitForAndGetAndSetContents(): Promise<HTMLElement> {
     return new Promise((resolve) => {
       this.contents = this.newContents;
@@ -136,7 +143,24 @@ export default class Element {
   }
 
   public hasMembersOnlyBadge(element: HTMLElement) {
-    return Dom.anySelectedElementHasText(element, selectors.membersOnlyBadge);
+    if (this.isVideo(element)) {
+      const membersOnlyElements = element.querySelectorAll(
+        selectors.membersOnlyBadge,
+      );
+
+      return [...membersOnlyElements].some((element) => element.textContent);
+    }
+
+    if (element.textContent) {
+      const membersOnlyElement = Dom.getAncestor(
+        selectors.membersOnlyBadge,
+        element,
+      );
+
+      return !!membersOnlyElement;
+    }
+
+    return false;
   }
 
   public hasChipBeenClicked(event: Event) {

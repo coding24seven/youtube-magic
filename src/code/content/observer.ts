@@ -17,7 +17,7 @@ export default class Observer {
   public constructor(
     private observedElement: HTMLElement,
     private eventBus: EventTarget,
-    private exclusionSelectors?: string[],
+    private exclusionSelectors?: string[] /* identifies elements that should not be acted on */,
   ) {
     this.mutationObserver = this.create();
   }

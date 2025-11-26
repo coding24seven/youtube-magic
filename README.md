@@ -22,10 +22,11 @@ A browser extension that filters out watched and members-only YouTube videos, ke
 ## Development
 
 - git clone this repository.
-- run `npm i`
-- run `npm start` or `./ddstart` for docker-desktop on Linux
+- Run `npm i`
+- Run `npm start` or `./ddstart` for docker-desktop on Linux
 - Load the extension in your browser:
   - Firefox: Go to `about:debugging#/runtime/this-firefox` and select "Load Temporary Add-on."
+- Create a `feature/`, `bugfix/`, etc. branch, where you'll commit your code
 
 ## Build and Package (for Mozilla code reviewers)
 
@@ -33,7 +34,7 @@ A browser extension that filters out watched and members-only YouTube videos, ke
 
 ## Manual Build Pipeline (for extension developers)
 
-- Create a pull request to merge your `feature` branch into the `develop` branch
+- Create a pull request to merge your `feature/`, `bugfix/`, etc. branch into the `develop` branch
 - Create `release/v<version>` off `develop` branch
 - Update `version` in `package.json`, `manifest.json`, `CHANGELOG.md`
 - Run `npm install` to update the version in `package-lock.json`
